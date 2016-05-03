@@ -1,5 +1,9 @@
 -- Config file for Awesome
 local awful = require('awful')
+local pass = dofile ('/home/thartman/projects/awesome-pass/awesome-pass.lua')
+
+-- temp
+pass.pass_icon = '/home/thartman/projects/awesome-pass/icons/pass.png'
 
 -- {{{ Awful config
 awful.client = require('awful.client')
@@ -12,6 +16,14 @@ modkey = 'Mod4'
 
 -- {{{ The conf array contains and controls all elements for configuring awesome 
 conf = {}
+-- }}}
+
+-- {{{ Awesome theme
+conf.theme = '/home/thartman/projects/awesomerc/modules/theme.lua'
+-- }}}
+
+-- {{{ Functions
+conf.func = dofile ('/home/thartman/projects/awesomerc/modules/functions.lua')
 -- }}}
 
 -- {{{ Default tools and programs
@@ -27,7 +39,80 @@ conf.tools.background_cmd = 'nitrogen'
 conf.tools.background_cmdopts = '--restore'
 -- }}}
 
--- {{{ Buttons
+-- {{{ Widgets
+conf.widgets = {}
+conf.widgets.clock = awful.widget.textclock()
+conf.widgets.pass = pass.widget()
+-- }}}
+
+-- {{{ Screen Tags and Layouts
+conf.screens = {}
+conf.layouts = {
+   awful.layout.suit.floating,
+   awful.layout.suit.tile,
+   awful.layout.suit.tile.left,
+   awful.layout.suit.tile.bottom,
+   awful.layout.suit.tile.top,
+   awful.layout.suit.fair,
+   awful.layout.suit.fair.horizontal,
+   awful.layout.suit.spiral,
+   awful.layout.suit.spiral.dwindle,
+   awful.layout.suit.max,
+   awful.layout.suit.max.fullscreen,
+   awful.layout.suit.magnifier
+}
+
+-- Right screen definition
+conf.screens[1] = {}
+conf.screens[1].tags =
+   { names = {'surf','connect','play','watch','create','monitor'},
+     layout = {awful.layout.suit.max,
+               awful.layout.suit.max,
+               awful.layout.suit.max,
+               awful.layout.suit.max,
+               awful.layout.suit.floating,
+               awful.layout.suit.tile.left}
+   }
+conf.screens[1].widgets = {conf.widgets.pass,
+                           conf.widgets.clock,}
+
+-- Left screen definition
+conf.screens[2] = {}
+conf.screens[2].tags =
+   { names = {'chat', 'code', 'read', 'system'},
+     layout = {awful.layout.suit.tile.left,
+               awful.layout.suit.max,
+               awful.layout.suit.tile.bottom,
+               awful.layout.suit.tile.left}
+   }
+conf.screens[2].widgets = {}
+-- }}}
+
+-- {{{ Menu customization
+conf.menus = {}
+conf.menus.sys = {
+   { '&lock'     , conf.func.system_lock },
+   { '&reboot'   , conf.func.reboot      },
+   { '&shutdown' , conf.func.shutdown    },
+}
+
+conf.menus.awesome = {
+   { '&edit config'     ,                 },
+   { '&restart awesome' , awesome.restart },
+   { '&quit awesome'    , awesome.quit    },
+}
+
+conf.menus.apps = {
+}
+
+conf.menus.main = {
+   { '&system'  , conf.menus.sys     },
+   { '&apps'    , conf.menus.apps    },
+   { '&awesome' , conf.menus.awesome },
+}
+-- }}}
+
+-- {{{ Mouse Buttons
 conf.buttons = {}
 conf.buttons.taglist =
    awful.util.table.join(awful.button({ }, 1, awful.tag.viewonly),
@@ -85,59 +170,17 @@ conf.buttons.tasklist =
             end))
 -- }}}
 
--- {{{ Widgets
-conf.widgets = {}
-conf.widgets.clock = awful.widget.textclock()
--- }}}
-
--- {{{ Screen Tags and Layouts
-conf.screens = {}
-conf.layouts = {
-   awful.layout.suit.floating,
-   awful.layout.suit.tile,
-   awful.layout.suit.tile.left,
-   awful.layout.suit.tile.bottom,
-   awful.layout.suit.tile.top,
-   awful.layout.suit.fair,
-   awful.layout.suit.fair.horizontal,
-   awful.layout.suit.spiral,
-   awful.layout.suit.spiral.dwindle,
-   awful.layout.suit.max,
-   awful.layout.suit.max.fullscreen,
-   awful.layout.suit.magnifier
-}
-
--- Right screen definition
-conf.screens[1] = {}
-conf.screens[1].tags = { names = {'surf','connect','play','watch','create','monitor'},
-                         layout = {awful.layout.suit.max,
-                                   awful.layout.suit.max,
-                                   awful.layout.suit.max,
-                                   awful.layout.suit.max,
-                                   awful.layout.suit.floating,
-                                   awful.layout.suit.tile.left}
-                       }
-conf.screens[1].widgets = {conf.widgets.clock}
-
--- Left screen definition
-conf.screens[2] = {}
-conf.screens[2].tags = { names = {'chat', 'code', 'read', 'system'},
-                         layout = {awful.layout.suit.tile.left,
-                                   awful.layout.suit.max,
-                                   awful.layout.suit.tile.bottom,
-                                   awful.layout.suit.tile.left}
-                       }
-conf.screens[2].widgets = {}
--- }}}
-
 -- Setup the screens
-dofile ('/home/thartman/projects/awesomerc/common/screens.lua')
+dofile ('/home/thartman/projects/awesomerc/modules/screens.lua')
+
+-- Setup the menus
+dofile ('/home/thartman/projects/awesomerc/modules/menu.lua')
 
 -- Setup the keys mappings
-dofile ('/home/thartman/projects/awesomerc/common/keys.lua')
+dofile ('/home/thartman/projects/awesomerc/modules/keys.lua')
 
 -- Setup mouse bindings
-dofile ('/home/thartman/projects/awesomerc/common/mouse.lua')
+dofile ('/home/thartman/projects/awesomerc/modules/mouse.lua')
 
 -- Setup the windowing rules
-dofile ('/home/thartman/projects/awesomerc/common/rules.lua')
+dofile ('/home/thartman/projects/awesomerc/modules/rules.lua')

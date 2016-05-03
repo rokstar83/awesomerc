@@ -87,7 +87,7 @@ conf.globalkeys = awful.util.table.join(
 
 -- Bind all key numbers to tags
 for i = 1, 9 do
-   globalkeys = awful.util.table.join(globalkeys,
+   conf.globalkeys = awful.util.table.join(conf.globalkeys,
       -- View tag only.
       awful.key({ modkey }, "#" .. i + 9,
          function ()

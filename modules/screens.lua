@@ -1,6 +1,7 @@
 -- Generate the screen wibox and tag boxes
 local awful = require('awful')
 local wibox = require('wibox')
+local beautiful = require('beautiful')
 
 awful.util.spawn(conf.tools.background_cmd .. " " .. conf.tools.background_cmdopts)
 
