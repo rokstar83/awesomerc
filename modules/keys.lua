@@ -6,6 +6,8 @@ local awful = require ("awful")
 local naughty = require ("naughty")
 local math = require ("math")
 
+-- Default keys 
+
 conf.globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
@@ -80,9 +82,7 @@ conf.globalkeys = awful.util.table.join(
                   conf.screens[mouse.screen].promptbox,
                   awful.util.eval, nil,
                   awful.util.getdir("cache") .. "/history_eval")
-              end),
-    -- Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end)
+              end)
 )
 
 -- Bind all key numbers to tags
@@ -127,6 +127,15 @@ for i = 1, 9 do
             end
    end))
 end
+
+-- Bind custom global keys
+
+for _, key in ipairs(conf.keys.global) do
+   conf.globalkeys = awful.util.table.join(conf.globalkeys,
+                                           awful.key( key[1], key[2] , key[3]))
+end
+
+-- Blind client keys
 
 conf.clientkeys = awful.util.table.join(
    awful.key({ modkey,           }, "f",

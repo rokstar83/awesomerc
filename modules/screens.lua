@@ -32,7 +32,7 @@ for s = 1, screen.count() do
    -- taglist widget
    conf.screens[s].taglist =
       awful.widget.taglist(s, awful.widget.taglist.filter.all,
-                           conf.buttons.taglist)   
+                           conf.buttons.taglist)
 
    -- tasklist widget
    conf.screens[s].tasklist =
