@@ -5,10 +5,15 @@ local beautiful = require('beautiful')
 
 awful.util.spawn(conf.tools.background_cmd .. " " .. conf.tools.background_cmdopts)
 
-tags = {}
+local spacer = conf.widgets.spacer or wibox.widget.textbox()
+if conf.widgets.spacer == nil then
+   spacer:set_text(" | ")
+end
+
+conf.tags = {}
 for s = 1, screen.count() do
-   tags[s] = awful.tag(conf.screens[s].tags.names, s,
-                       conf.screens[s].tags.layout)
+   conf.tags[s] = awful.tag(conf.screens[s].tags.names, s,
+                            conf.screens[s].tags.layout)
 end
 
 -- {{{ Wibox
@@ -51,7 +56,8 @@ for s = 1, screen.count() do
    conf.screens[s].top_right_layout = wibox.layout.fixed.horizontal()
    conf.screens[s].top_right_layout:add(conf.screens[s].layoutbox)
    for w = 1, table.getn(conf.screens[s].widgets) do
-      conf.screens[s].top_right_layout:add(conf.screens[s].widgets[w])
+      conf.screens[s].top_right_layout:add(spacer)
+      conf.screens[s].top_right_layout:add(conf.screens[s].widgets[w])      
    end
 
    -- Main layout

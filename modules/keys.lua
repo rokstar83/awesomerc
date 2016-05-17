@@ -136,7 +136,6 @@ for _, key in ipairs(conf.keys.global) do
 end
 
 -- Blind client keys
-
 conf.clientkeys = awful.util.table.join(
    awful.key({ modkey,           }, "f",
       function (c) c.fullscreen = not c.fullscreen  end),

@@ -1,6 +1,7 @@
 -- Config file for Awesome
 local awful = require('awful')
-local pass = dofile ('/home/thartman/projects/awesome-pass/awesome-pass.lua')
+local pass = require('awesome-pass')
+local wibox = require('wibox')
 
 -- temp
 pass.pass_icon = '/home/thartman/projects/awesome-pass/icons/pass.png'
@@ -20,7 +21,7 @@ conf = {}
 
 -- {{{ Awesome theme
 conf.theme = '/home/thartman/projects/awesomerc/modules/theme.lua'
---local beautiful = require('beautiful')
+local beautiful = require('beautiful')
 --beautiful.init(conf.theme)
 -- }}}
 
@@ -48,8 +49,31 @@ conf.dirs.screenshots = "~/pictures/screenshots/"
 
 -- {{{ Widgets
 conf.widgets = {}
+
+-- conf.widgets.spacer = wibox.widget.textbox()
+-- conf.widgets.spacer:set_text(" | ")
+
 conf.widgets.clock = awful.widget.textclock()
-conf.widgets.pass = pass()
+
+local base = wibox.widget.textbox()
+base:set_text("pass")
+conf.widgets.pass = pass(base)
+-- }}}
+
+-- {{{ custom keybindings
+conf.keys = {}
+conf.keys.global = {
+   { { modkey }, "F12", conf.func.system_lock },
+   --   { { modkey }, "c"  , function () os.execute("xsel -p -i | xsel - i -b") end},
+   { { modkey }, "Print",
+      function () os.execute("scrot -e 'mv $f " .. conf.dirs.screenshots ..
+                             " 2>/dev/null'" ) end},
+   { { modkey }, "p", function () conf.widgets.pass:toggle_pass_show() end}
+}
+
+dofile ('/home/thartman/projects/awesomerc/modules/keys.lua')
+
+dofile ('/home/thartman/projects/awesomerc/modules/mouse.lua')
 -- }}}
 
 -- {{{ Screen Tags and Layouts
@@ -95,6 +119,8 @@ conf.screens[2].tags =
                awful.layout.suit.tile.left}
    }
 conf.screens[2].widgets = {}
+
+dofile ('/home/thartman/projects/awesomerc/modules/screens.lua')
 -- }}}
 
 -- {{{ Menu customization
@@ -119,34 +145,37 @@ conf.menus.main = {
    { '&apps'    , conf.menus.apps    },
    { '&awesome' , conf.menus.awesome },
 }
+
+dofile ('/home/thartman/projects/awesomerc/modules/menu.lua')
 -- }}}
 
--- {{{ custom keybindings
-conf.keys = {}
-conf.keys.global = {
-   { { modkey }, "F12", conf.func.system_lock },
-   --   { { modkey }, "c"  , function () os.execute("xsel -p -i | xsel - i -b") end},
-   { { modkey }, "Print",
-      function () os.execute("scrot -e 'mv $f " .. conf.dirs.screenshots ..
-                             " 2>/dev/null'" ) end},
+-- {{{ custom rules
+conf.rules = {
+    -- All clients will match this rule.
+    { rule = { },
+      properties = { border_width = beautiful.border_width,
+                     border_color = beautiful.border_normal,
+                     focus = awful.client.focus.filter,
+                     raise = true,
+                     keys = conf.clientkeys,
+                     buttons = conf.buttons.client } },
+    { rule = { class = "mplayer" },
+      properties = { floating = true } },
+    { rule = { class = "pinentry" },
+      properties = { floating = true } },
+    { rule = { class = "gimp" },
+      properties = { floating = true } },
+    { rule = { class = "emacs" },
+      properties = { tag = conf.tags[2][2] } },
+    { rule = { class = "firefox" },
+      properties = { tag = conf.tags[1][1] } }
+    -- Set Firefox to always map on tags number 2 of screen 1.
+    -- { rule = { class = "Firefox" },
+    --   properties = { tag = tags[1][2] } },
 }
 
--- }}}
-
--- Setup the keys mappings
-dofile ('/home/thartman/projects/awesomerc/modules/keys.lua')
-
--- Setup mouse bindings
-dofile ('/home/thartman/projects/awesomerc/modules/mouse.lua')
-
--- Setup the screens
-dofile ('/home/thartman/projects/awesomerc/modules/screens.lua')
-
--- Setup the menus
-dofile ('/home/thartman/projects/awesomerc/modules/menu.lua')
-
--- Setup the windowing rules
 dofile ('/home/thartman/projects/awesomerc/modules/rules.lua')
+-- }}}
 
 -- Setup client rules
 dofile ('/home/thartman/projects/awesomerc/modules/client.lua')
