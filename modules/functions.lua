@@ -1,10 +1,12 @@
 local awful = require('awful')
 local funcs  = {}
 
--- {{{ Functions
+-- Functions
+-- {{{
 
 funcs.system_lock = function ()
-   awful.util.spawn(conf.tools.screenlock_cmd)
+   awful.util.spawn(conf.tools.screenlock_cmd .. ' ' ..
+                       conf.tools.screenlock_cmdopts)
 end
 
 funcs.reboot = function ()
@@ -38,3 +40,5 @@ funcs.reboot = function ()
 end         
 
 return funcs
+
+-- }}}
