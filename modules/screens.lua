@@ -54,11 +54,13 @@ for s = 1, screen.count() do
 
    -- Right top layout
    conf.screens[s].top_right_layout = wibox.layout.fixed.horizontal()
-   conf.screens[s].top_right_layout:add(conf.screens[s].layoutbox)
+
    for w = 1, table.getn(conf.screens[s].widgets) do
       conf.screens[s].top_right_layout:add(spacer)
       conf.screens[s].top_right_layout:add(conf.screens[s].widgets[w])      
    end
+
+   conf.screens[s].top_right_layout:add(conf.screens[s].layoutbox)
 
    -- Main layout
    conf.screens[s].top_layout = wibox.layout.align.horizontal()

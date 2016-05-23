@@ -7,16 +7,16 @@ theme.font = "terminus 8"
 -- }}}
 
 -- {{{ Colors
-theme.fb_normal  = "#AAAAAA"
-theme.fb_focus   = "#FFFFFF"
-theme.fb_urgent  = "#FFFFFF"
-theme.bg_normal  = "#000000"
-theme.bg_focus   = "#333333"
-theme.bg_urgent  = "#FF3333"
+theme.fb_normal  = "#DCDCCCFF"
+theme.fb_focus   = "#F0DFAFFF"
+theme.fb_urgent  = "#CC9393FF"
+theme.bg_normal  = "#00000000"
+theme.bg_focus   = "#1E232099"
+theme.bg_urgent  = "#3F3F3FFF"
 theme.bg_systray = theme.bg_normal
 
 -- {{{ Border
-theme.border_width = 1
+theme.border_width = 2
 theme.border_normal = theme.bg_normal
 theme.border_marked = theme.bg_urgent
 theme.border_focus = bg_focus
@@ -24,12 +24,12 @@ theme.border_normal = bg_normal
 -- }}}
 
 -- {{{ Titlebars
-theme.titlebar_bg_focus  = "#3F3F3F"
+theme.titlebar_bg_focus  = "#3F3F3FFF"
 --theme.titlebar_bg_normal = "#3F3F3F"
 -- }}}
 
 -- {{{ Mouse finder
-theme.mouse_finder_color = "#CC9393"
+theme.mouse_finder_color = "#CC9393FF"
 -- mouse_finder_[timeout|animate_timeout|radius|factor]
 -- }}}
 
@@ -61,32 +61,6 @@ theme.layout_max        = "/usr/share/awesome/themes/zenburn/layouts/max.png"
 theme.layout_fullscreen = "/usr/share/awesome/themes/zenburn/layouts/fullscreen.png"
 theme.layout_magnifier  = "/usr/share/awesome/themes/zenburn/layouts/magnifier.png"
 theme.layout_floating   = "/usr/share/awesome/themes/zenburn/layouts/floating.png"
--- }}}
--- }}}
-
--- {{{ Titlebar
-theme.titlebar_close_button_focus  = "/usr/share/awesome/themes/zenburn/titlebar/close_focus.png"
-theme.titlebar_close_button_normal = "/usr/share/awesome/themes/zenburn/titlebar/close_normal.png"
-
-theme.titlebar_ontop_button_focus_active  = "/usr/share/awesome/themes/zenburn/titlebar/ontop_focus_active.png"
-theme.titlebar_ontop_button_normal_active = "/usr/share/awesome/themes/zenburn/titlebar/ontop_normal_active.png"
-theme.titlebar_ontop_button_focus_inactive  = "/usr/share/awesome/themes/zenburn/titlebar/ontop_focus_inactive.png"
-theme.titlebar_ontop_button_normal_inactive = "/usr/share/awesome/themes/zenburn/titlebar/ontop_normal_inactive.png"
-
-theme.titlebar_sticky_button_focus_active  = "/usr/share/awesome/themes/zenburn/titlebar/sticky_focus_active.png"
-theme.titlebar_sticky_button_normal_active = "/usr/share/awesome/themes/zenburn/titlebar/sticky_normal_active.png"
-theme.titlebar_sticky_button_focus_inactive  = "/usr/share/awesome/themes/zenburn/titlebar/sticky_focus_inactive.png"
-theme.titlebar_sticky_button_normal_inactive = "/usr/share/awesome/themes/zenburn/titlebar/sticky_normal_inactive.png"
-
-theme.titlebar_floating_button_focus_active  = "/usr/share/awesome/themes/zenburn/titlebar/floating_focus_active.png"
-theme.titlebar_floating_button_normal_active = "/usr/share/awesome/themes/zenburn/titlebar/floating_normal_active.png"
-theme.titlebar_floating_button_focus_inactive  = "/usr/share/awesome/themes/zenburn/titlebar/floating_focus_inactive.png"
-theme.titlebar_floating_button_normal_inactive = "/usr/share/awesome/themes/zenburn/titlebar/floating_normal_inactive.png"
-
-theme.titlebar_maximized_button_focus_active  = "/usr/share/awesome/themes/zenburn/titlebar/maximized_focus_active.png"
-theme.titlebar_maximized_button_normal_active = "/usr/share/awesome/themes/zenburn/titlebar/maximized_normal_active.png"
-theme.titlebar_maximized_button_focus_inactive  = "/usr/share/awesome/themes/zenburn/titlebar/maximized_focus_inactive.png"
-theme.titlebar_maximized_button_normal_inactive = "/usr/share/awesome/themes/zenburn/titlebar/maximized_normal_inactive.png"
 -- }}}
 -- }}}
 

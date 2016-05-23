@@ -6,9 +6,10 @@ local awful = require('awful')
 local pass = dofile ('/home/thartman/projects/awesome-pass/awesome-pass.lua')
 local beautiful = require('beautiful')
 awful.client = require('awful.client')
-cawful.screen = require('awful.screen')
+awful.screen = require('awful.screen')
 awful.rules = require ('awful.rules')
 awful.menu = require('awful.menu')
+wibox = require('wibox')
 -- }}}
 
 --- Initialize
@@ -27,9 +28,9 @@ modkey = 'Mod4'
 
 --- Theme
 -- {{{
--- conf.theme = '/home/thartman/projects/awesomerc/modules/theme.lua'
--- local beautiful = require('beautiful')
--- beautiful.init(conf.theme)
+ conf.theme = conf.modules_dir .. 'theme.lua'
+ local beautiful = require('beautiful')
+ beautiful.init(conf.theme)
 -- }}}
 
 --- Default tools and programs
@@ -63,7 +64,7 @@ conf.tools.background_cmdopts = '--restore'
 conf.funcs = dofile (conf.modules_dir .. 'functions.lua')
 -- }}}
 
--- Widget definitions
+--- Widget definitions
 -- {{{
 -- Define the various widgets that will be
 -- displayed in awesome.  These will be placed in wiboxes and system
@@ -75,7 +76,30 @@ base:set_text("pass")
 conf.widgets.pass = pass(base)
 -- }}}
 
--- Screen, Layouts, and Tags
+--- Mouse Buttons
+-- {{{
+dofile (conf.modules_dir .. 'mouse.lua')
+-- }}}
+
+--- Keybindings
+-- {{{ 
+conf.keys = {}
+conf.keys.global = {
+   { { modkey }, "F12", conf.funcs.system_lock },
+   --   { { modkey }, "c"  , function () os.execute("xsel -p -i | xsel - i -b") end},
+   { { modkey }, "Print",
+      function () os.execute("scrot -e 'mv $f " .. conf.dirs.screenshots ..
+                             " 2>/dev/null'" ) end},
+}
+
+conf.keys.client = {
+
+}
+
+dofile (conf.modules_dir .. 'keys.lua')
+-- }}}
+
+--- Screen, Layouts, and Tags
 -- {{{
 -- Define the number of screens, the number of tags per screen and the
 -- layouts for the default layout for those tags. A 'screen' in this
@@ -115,9 +139,11 @@ conf.screens[1].tags =
    }
 conf.screens[1].widgets = { conf.widgets.pass,
                             conf.widgets.clock }
+
+dofile (conf.modules_dir .. 'screens.lua')
 -- }}}
 
--- Menus
+--- Menus
 -- {{{ 
 conf.menus = {}
 conf.menus.sys = {
@@ -141,32 +167,11 @@ conf.menus.main = {
    { '&awesome' , conf.menus.awesome },
 }
 
-dofile ('/home/thartman/projects/awesomerc/modules/menu.lua')
+dofile (conf.modules_dir .. 'menu.lua')
 -- }}}
 
---- Keybindings
--- {{{ 
-conf.keys = {}
-conf.keys.global = {
-   { { modkey }, "F12", conf.funcs.system_lock },
-   --   { { modkey }, "c"  , function () os.execute("xsel -p -i | xsel - i -b") end},
-   { { modkey }, "Print",
-      function () os.execute("scrot -e 'mv $f " .. conf.dirs.screenshots ..
-                             " 2>/dev/null'" ) end},
-}
-
-dofile ('/home/thartman/projects/awesomerc/modules/keys.lua')
--- }}}
-
---- Mouse Buttons
+--- Rules
 -- {{{
-dofile ('/home/thartman/projects/awesomerc/modules/mouse.lua')
--- }}}
-
--- Setup the screens
-dofile ('/home/thartman/projects/awesomerc/modules/screens.lua')
-
--- Rules {{{
 -- Global rules to define how certain programs are
 -- handled by awesome. Primarily this is used to let certain programs
 -- 'float' rather than become part of the tiled window set. This is
@@ -188,14 +193,15 @@ conf.rules = {
     { rule = { class = "gimp" },
       properties = { floating = true } },
     { rule = { class = "emacs" },
-      properties = { tag = tags[1][2] } },
+      properties = { tag = conf.tags[1][2] } },
     { rule = { class = "Firefox" },
-      properties = { tag = tags[1][4] } }
+      properties = { tag = conf.tags[1][4] } }
 }
 
 -- Setup the windowing rules
 dofile ('/home/thartman/projects/awesomerc/modules/rules.lua')
--- }}}
 
 -- Setup client rules
-dofile ('/home/thartman/projects/awesomerc/modules/client.lua')
+dofile (conf.modules_dir .. 'client.lua')
+
+-- }}}
