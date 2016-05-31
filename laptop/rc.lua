@@ -20,6 +20,7 @@ wibox = require('wibox')
 conf = {}
 conf.config_dir = '/home/' .. os.getenv('USER') .. '/.config/awesome/'
 conf.modules_dir = conf.config_dir .. 'modules/'
+conf.icon_dir = conf.config_dir .. 'icons/'
 -- The modkey is the primary means of interacting with awesome. By
 -- default this is set to mod4, sometimes called the 'super' key or
 -- 'windows' key depending on your specific keyboard layout
@@ -72,8 +73,10 @@ conf.funcs = dofile (conf.modules_dir .. 'functions.lua')
 conf.widgets = {}
 conf.widgets.clock = awful.widget.textclock()
 local base = wibox.widget.textbox()
-base:set_text("pass")
-conf.widgets.pass = pass(base)
+base:set_text('')
+--local base = awful.widget.button({image = conf.icon_dir .. "144-lock.svg",})
+-- base:set_forground_color('#ffffffff')
+conf.widgets.pass = pass(base, { promptbox = conf.screens[1].promptbox} )
 -- }}}
 
 --- Mouse Buttons
