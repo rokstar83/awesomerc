@@ -74,12 +74,12 @@ conf.globalkeys = awful.util.table.join(
     -- Prompt
     awful.key({ modkey },            "r",
        function ()
-          conf.screens[mouse.screen].promptbox:run() end),
+          conf.widgets.prompt:run() end),
 
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run({ prompt = "Run Lua code: " },
-                  conf.screens[mouse.screen].promptbox.widget,
+                  conf.widgets.prompt.widget,
                   awful.util.eval, nil,
                   awful.util.getdir("cache") .. "/history_eval")
               end)

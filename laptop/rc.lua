@@ -72,11 +72,20 @@ conf.funcs = dofile (conf.modules_dir .. 'functions.lua')
 -- trays in the 'Screen, Tags, and Layouts' section
 conf.widgets = {}
 conf.widgets.clock = awful.widget.textclock()
+conf.widgets.prompt = awful.widget.prompt()
+
+--- pass widget
+-- {{{
 local base = wibox.widget.textbox()
 base:set_text('')
---local base = awful.widget.button({image = conf.icon_dir .. "144-lock.svg",})
--- base:set_forground_color('#ffffffff')
-conf.widgets.pass = pass(base, { promptbox = conf.screens[1].promptbox} )
+local pass_args = {}
+pass_args.prompt = conf.widgets.prompt
+conf.widgets.pass = pass(base, pass_args )
+-- }}}
+
+-- temp widget
+-- {{{
+-- }}}
 -- }}}
 
 --- Mouse Buttons
@@ -140,13 +149,14 @@ conf.screens[1].tags =
                 conf.layouts[4],
      }
    }
-conf.screens[1].widgets = { conf.widgets.pass,
+conf.screens[1].widgets = { conf.widgets.prompt,
+                            conf.widgets.pass,
                             conf.widgets.clock }
 
 dofile (conf.modules_dir .. 'screens.lua')
 -- }}}
 
---- Menus
+--- Menus-- tasklist widget
 -- {{{ 
 conf.menus = {}
 conf.menus.sys = {
