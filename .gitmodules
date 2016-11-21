@@ -1,0 +1,12 @@
+[submodule "awesome-pass"]
+	path = awesome-pass
+	url = https://github.com/thartman83/awesome-pass.git
+[submodule "radical"]
+	path = radical
+	url = https://github.com/Elv13/radical.git
+[submodule "Orglendar"]
+	path = Orglendar
+	url = https://github.com/alexander-yakushev/Orglendar.git
+[submodule "circuit"]
+	path = circuit
+	url = git@github.com:thartman83/circuit
