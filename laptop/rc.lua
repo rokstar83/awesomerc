@@ -5,6 +5,7 @@
 local awful = require('awful')
 local pass = dofile ('/home/thartman/projects/awesome-pass/awesome-pass.lua')
 local beautiful = require('beautiful')
+local vicious = require('vicious')
 awful.client = require('awful.client')
 awful.screen = require('awful.screen')
 awful.rules = require ('awful.rules')
@@ -71,7 +72,7 @@ conf.funcs = dofile (conf.modules_dir .. 'functions.lua')
 -- displayed in awesome.  These will be placed in wiboxes and system
 -- trays in the 'Screen, Tags, and Layouts' section
 conf.widgets = {}
-conf.widgets.clock = awful.widget.textclock()
+conf.widgets.clock = awful.widget.textclock("%a %b %d, %l:%M")
 conf.widgets.prompt = awful.widget.prompt()
 
 --- pass widget
@@ -86,6 +87,86 @@ conf.widgets.pass = pass(base, pass_args )
 -- temp widget
 -- {{{
 -- }}}
+
+-- cpu widget
+-- {{{
+conf.widgets.cpu = wibox.layout.fixed.horizontal()
+conf.widgets.cpu_graph = awful.widget.graph()
+conf.widgets.cpu_graph:set_width(50)
+conf.widgets.cpu_graph:set_background_color("#00000000")
+conf.widgets.cpu_graph:set_color({ type = "linear", from = { 0, 0 }, to = { 50, 0 },
+                                   stops = { { 0, "#001122" }, { 1, "#223355" } } })
+conf.widgets.cpu_temp = wibox.widget.textbox()
+vicious.register(conf.widgets.cpu_graph, vicious.widgets.cpu, "$1")
+vicious.register(conf.widgets.cpu_temp, vicious.widgets.thermal, " $1 °С", 20, "thermal_zone0")
+
+conf.widgets.cpu:add(conf.widgets.cpu_graph)
+conf.widgets.cpu:add(conf.widgets.cpu_temp)
+-- }}}
+
+--- Volume widget
+-- {{{
+local audio = dofile('/home/thartman/projects/awesomerc/modules/audio.lua')
+conf.widgets.vol_widget = wibox.layout.fixed.horizontal()
+local up_vol = wibox.widget.textbox(" +")
+local down_vol = wibox.widget.textbox("- ")
+local vol_graph = awful.widget.progressbar()
+
+up_vol:buttons(awful.util.table.join(
+                  awful.button({}, 1,
+                     function ()
+                        audio:adjust_mixer_level("Master", 5)
+                        vol_graph:refresh()                        
+                     end)))
+down_vol:buttons(awful.util.table.join(
+                    awful.button({}, 1,
+                       function ()
+                          audio:adjust_mixer_level("Master", -5)
+                          vol_graph:refresh()
+                       end)))
+
+vol_graph:set_width(50)
+vol_graph:set_color("#FFFFFF")
+vol_graph:set_background_color("#000000")
+vol_graph.refresh = function ()
+   local limits = audio:get_mixer_limits("Master")
+   local levels = audio:get_mixer_level("Master")
+   local current_val
+
+   for k,v in pairs(levels) do
+      current_val = v.level
+      break
+   end
+
+   vol_graph:set_value(current_val / limits.upper)
+end
+
+vol_graph:refresh()
+local vol_graph_layout = wibox.layout.margin()
+vol_graph_layout:set_widget(vol_graph)
+vol_graph_layout:set_top(5)
+vol_graph_layout:set_bottom(5)
+
+conf.widgets.vol_widget:add(down_vol)
+conf.widgets.vol_widget:add(vol_graph_layout)
+conf.widgets.vol_widget:add(up_vol)
+-- }}}
+
+-- battery monitor widget
+-- {{{
+--local bat = dofile ("/home/thartman/.config/awesome/modules/batmon.lua")
+conf.widgets.batmon = wibox.widget.textbox()
+-- conf.widgets.batmon = awful.widget.progressbar()
+-- conf.widgets.batmon:set_height(8)
+-- conf.widgets.batmon:set_width(10)
+-- conf.widgets.batmon:set_vertical(true)
+-- conf.widgets.batmon:set_background_color("#494B4F")
+-- conf.widgets.batmon:set_border_color(nil)
+-- conf.widgets.batmon:set_color({ type = "linear", from = { 0, 0 }, to = { 0, 10 },
+--                                stops = { { 0, "#AECF96" }, { 0.5, "#88A175" }, { 1, "#FF5656" }
+-- }})
+
+vicious.register(conf.widgets.batmon, vicious.widgets.bat, "$1$2 % ($3)", 5, "BAT0")
 -- }}}
 
 --- Mouse Buttons
@@ -150,13 +231,17 @@ conf.screens[1].tags =
      }
    }
 conf.screens[1].widgets = { conf.widgets.prompt,
+                            conf.widgets.batmon,
+                            conf.widgets.vol_widget,
+                            conf.widgets.cpu,
                             conf.widgets.pass,
                             conf.widgets.clock }
 
 dofile (conf.modules_dir .. 'screens.lua')
 -- }}}
 
---- Menus-- tasklist widget
+--- Menus
+-- tasklist widget
 -- {{{ 
 conf.menus = {}
 conf.menus.sys = {

@@ -19,9 +19,11 @@
 -- }}}
 
 --- Locals -- {{{
+local util = require('awful.util')
 local audio = { mt = {} }
 local setmetatable = setmetatable
-local util = require('awful.util')
+local tonumber = tonumber
+
 -- }}}
 
 -- Local Functions -- {{{
@@ -29,7 +31,7 @@ local util = require('awful.util')
 --- lines
 -- @param str String to return as lines
 -- Splits a string into a table of strings splitting by newlines
-local function lines(str)
+local function lines(str) -- {{{
    local t = {}
    local function helper(line) table.insert(t, line) return "" end
    helper((str:gsub("(.-)\r?\n", helper)))
@@ -43,6 +45,52 @@ local function get_amixer_raw () -- {{{
    return util.pread("amixer")
 end
 -- }}}
+
+--- trim
+-- Return a string lacking white space at the beginning and end of the
+-- string
+function trim(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+local function map(func, arr)
+   local retval = {}
+   for i,v in ipairs(arr) do
+      retval[i] = func(v)
+   end
+   return retval
+end
+
+--- split
+local function split(str, delim, noblanks)
+   local t = {}
+   if str == nil then
+      return t
+   end
+   
+   local function helper(part)
+      table.insert(t, part)
+      return ""
+   end
+   helper((str:gsub("(.-)" .. delim, helper)))
+
+   if noblanks then
+      return remove_blanks(t)
+   else
+      return t
+   end
+end
+
+--- remove_blanks
+local function remove_blanks(t)
+   local retval = {}
+   for _, s in ipairs(t) do
+      if s ~= "" and s ~= nil then
+         table.insert(retval, s)
+      end
+   end
+   return retval
+end
 
 -- }}}
 
@@ -60,8 +108,10 @@ function audio:get_mixers () -- {{{
          mixer_name = line:match("'(.*)'")
          if mixer_name ~= nil then retval[mixer_name] = {} end
       else
-         local prop, val = line:match("([^:]+):([^:]+)")
-         if prop ~= nil then retval[mixer_name][prop] = val or "" end
+         local parts = split(line, ":", t, t)
+         if #parts > 1 then            
+            retval[mixer_name][trim(parts[1])] = trim(parts[2])
+         end
       end
    end
 
@@ -73,21 +123,84 @@ end
 -- @param mixer Name of the mixer to change (eg: Master, Headphone, etc)
 -- @param step Amount to change
 function audio:adjust_mixer_level (mixer, step) -- {{{
+   local levels = self:get_mixer_level(mixer)
+   local chan
    
+   for k, v in pairs(levels) do
+      chan = v
+      break
+   end
+
+   self:set_mixer_level(mixer, chan.level+step)
 end
 -- }}}
 
 --- audio:get_mixer_level
 -- @param mixer Name of the mixer level to get
+--
+-- Returns a table of the available channels for the mixer with the
+-- current volume level of the channel
 function audio:get_mixer_level (mixer) -- {{{
+   local mixers = audio:get_mixers()
+
+   if mixers[mixer] == nil then
+      return {}
+   end
+
+   local channel_names = map(trim,split(mixers[mixer]["Playback channels"],"-",t))
+   local levels = {}
+   for _,channel_name in ipairs(channel_names) do
+      levels[channel_name] = {}
+      local parts = split(mixers[mixer][channel_name], " ", t)
+      local channel_type, level, level_pct, db, state = "","","","",""
+
+      if #parts == 5 then
+         channel_type, level, level_pct, db, state = parts[1], parts[2], parts[3], parts[4], parts[5]
+      elseif #parts == 4 then
+         channel_type, level, level_pct, db = parts[1], parts[2], parts[3], parts[4]
+      else
+         level, level_pct, db = parts[1], parts[2], parts[3]
+      end
+
+      levels[channel_name]["channel"] = channel_type or ""
+      levels[channel_name]["level"] = tonumber(level)
+      levels[channel_name]["level_pct"] = tonumber(level_pct:match("%[(%d+)%%%]"))
+      levels[channel_name]["db"] = db
+      levels[channel_name]["state"] = state or ""
+   end
    
+   return levels
+end
+-- }}}
+
+--- audio:get_mixer_limits
+-- 
+function audio:get_mixer_limits (mixer) -- {{{
+   local mixers = audio:get_mixers(mixer)
+
+   if mixers[mixer] == nil then
+      return {}
+   end
+
+   local lower, upper = mixers[mixer]["Limits"]:match("(%d+) %- (%d+)")
+
+   return { lower = tonumber(lower),
+            upper = tonumber(upper) }
 end
 -- }}}
 
 --- audio:set_mixer_level
 -- @param mixer Name of the mixer to change (eg: Master, Headphone, etc)
 function audio:set_mixer_level (mixer, value) -- {{{
+   -- Check that the value is sane
+   local limits = self:get_mixer_limits(mixer)
    
+   if value < limits.lower or value > limits.upper then
+      return
+   end
+
+   
+   local _ = util.pread("amixer sset " .. mixer .. " " .. value)
 end
 -- }}}
 
