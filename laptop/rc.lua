@@ -5,6 +5,7 @@
 local awful = require('awful')
 local pass = dofile ('/home/thartman/projects/awesome-pass/awesome-pass.lua')
 local beautiful = require('beautiful')
+local vicious = require('vicious')
 awful.client = require('awful.client')
 awful.screen = require('awful.screen')
 awful.rules = require ('awful.rules')
@@ -86,6 +87,32 @@ conf.widgets.pass = pass(base, pass_args )
 -- temp widget
 -- {{{
 -- }}}
+
+--- battery -- {{{
+conf.widgets.batmon = dofile(conf.modules_dir .. 'batmon.lua')()
+-- }}}
+
+--- cpu monitor -- {{{
+conf.widgets.cpu = dofile(conf.modules_dir .. "cpumon.lua")()
+-- }}}
+
+--- net widget testing -- {{{
+local net = dofile(conf.modules_dir .. 'net.lua')
+conf.widgets.wifi = net.wifi()
+
+--conf.widgets.wifi = wibox.widget.textbox()
+--vicious.register(conf.widgets.wifi, net.wifi, " $1 $2%", 5, "wlan0")
+-- conf.widgets.wifi_button:buttons(awful.util.table.join(awful.button({}, 1,
+--                                                           function ()
+--                                                              local aps = net.wifi:available_ssids("wlan0")
+                                                             
+--                                                              for _,v in ipairs(aps) do
+--                                                                 print(v)
+--                                                              end
+-- end)))
+
+-- }}}
+
 -- }}}
 
 --- Mouse Buttons
@@ -150,7 +177,10 @@ conf.screens[1].tags =
      }
    }
 conf.screens[1].widgets = { conf.widgets.prompt,
-                            conf.widgets.pass,
+                            conf.widgets.batmon,
+                            conf.widgets.cpu,
+                            conf.widgets.wifi,
+                            conf.widgets.pass,                            
                             conf.widgets.clock }
 
 dofile (conf.modules_dir .. 'screens.lua')

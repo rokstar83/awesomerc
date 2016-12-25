@@ -20,8 +20,14 @@
 -- }}}
 
 --- Locals -- {{{
+local awful = require('awful')
 local util = require('awful.util')
+local wibox = require('wibox')
+local vicious = require('vicious')
 local net = { mt = {} }
+local wifi = { mt = {} }
+net.wifi = wifi
+local setmetatable = setmetatable
 -- }}}
 
 --- Local Functions -- {{{
@@ -41,7 +47,11 @@ end
 -- Return a string lacking white space at the beginning and end of the
 -- string
 local function trim(s)
-  return (s:gsub("^%s*(.-)%s*$", "%1"))
+   if s ~= nil then
+      return (s:gsub("^%s*(.-)%s*$", "%1"))
+   else
+      return nil
+   end
 end
 
 local function map(func, arr)
@@ -82,6 +92,27 @@ local function split(str, delim, noblanks)
       return t
    end
 end
+
+-- table_update
+local table_update = function (t, set)
+    for k, v in pairs(set) do
+        t[k] = v
+    end
+    return t
+end
+
+--- build_connect_func -- {{{
+-- @param ssid name of the network to connect to
+function build_connect_func (wlan_iface, ssid)
+   return function ()
+      local cmd = "gksudo \"sh -c '/usr/sbin/iw " .. wlan_iface .. " disconnect; " ..
+         "/usr/sbin/iw " .. wlan_iface .. " connect \\\"" .. ssid .. "\\\"'\""
+      print(cmd)
+      awful.util.spawn(cmd)
+   end
+end
+-- }}}
+
 -- }}}
 
 --- Net Methods -- {{{
@@ -134,6 +165,133 @@ function net.__call (...) -- {{{
 end
 -- }}}
 
-return net
 -- }}}
 
+--- Wifi Methods -- {{{
+
+--- wifi:available_ssids
+-- @param wlan_iface name of the wireless network interface
+function wifi:available_ssids (wlan_iface) -- {{{
+   local wlan_iface = wlan_iface or self.wlan_iface
+   local ssid_raw = lines(util.pread("gksudo iw " .. wlan_iface .. " scan | grep SSID"))
+   local ssids = {}
+
+   for _, v in ipairs(ssid_raw) do
+      local parts = split(v, ":", true)
+      table.insert(ssids, trim(parts[2]))
+   end
+
+   return remove_blanks(ssids)
+end
+-- }}}
+
+--- wifi:current_ssid
+-- @param wlan_iface name of the wireless network interface
+function wifi:current_ssid (wlan_iface) -- {{{
+   local wlan_iface = wlan_iface or self.wlan_iface
+   local raw = lines(util.pread("/usr/sbin/iw " .. wlan_iface .. " link | grep SSID"))
+   
+   local parts = split(raw[1], ":", true)
+   
+   if #parts == 2 then
+      return trim(parts[2])
+   else
+      return nil
+   end
+end
+-- }}}
+
+--- wifi:signal_strength
+-- @param wlan_iface name of the wireless network interface
+function wifi:signal_strength (wlan_iface) -- {{{
+   local wlan_iface = wlan_iface or self.wlan_iface
+   local raw = util.pread("/usr/sbin/iw " .. wlan_iface .. " link | grep signal")
+
+   local dbm = tonumber(string.match(raw, "(-[%d]*) dBm"))
+
+   local quality = 2 * (dbm + 100)
+   if quality > 100 then
+      return 100
+   elseif quality < 0 then
+      return 0
+   else
+      return quality
+   end     
+end
+-- }}}
+
+--- wifi:connect -- {{{
+-- @param ssid name of the wifi network to connect to
+function wifi:connect (ssid, wlan_iface)
+   local wlan_iface = wlan_iface or self.wlan_iface
+
+   -- util.pread("/usr/sbin/iw " .. wlan_iface .. " connect"
+end
+-- }}}
+
+--- wifi:connect_menu -- {{{
+-- 
+function wifi:gen_connect_menu (wlan_iface)
+   local wlan_iface = wlan_iface or self.wlan_iface
+   local ssid_tbl = wifi:available_ssids(wlan_iface)
+
+   local retval = {}
+   for _, s in ipairs(ssid_tbl) do
+      table.insert(retval, { s, build_connect_func(wlan_iface, s)})
+   end
+
+   return awful.menu(retval)
+end
+-- }}}
+
+--- wifi:show_connect_menu -- {{{
+-- 
+function wifi:show_connect_menu (wlan_iface)
+   local wlan_iface = wlan_iface or self.wlan_iface
+
+   self.connect_menu = wifi:gen_connect_menu(wlan_iface)
+   self.connect_menu:toggle()
+end
+-- }}}
+
+--- wifi.worker
+-- 
+function wifi.worker (format, wlan_iface) -- {{{
+   local ssid = wifi:current_ssid(wlan_iface)
+   local strength = 0
+
+   if ssid ~= nil then
+      strength = wifi:signal_strength(wlan_iface)
+   end
+   
+   return { ssid or "No AP Found", strength }
+end
+-- }}}
+
+--- wifi.new -- {{{
+-- 
+function wifi.new (format, refresh_rate, wlan_iface)
+   local w = table_update(wibox.widget.textbox(), wifi)
+
+   w.format = format or " $1 $2%"
+   w.refresh_rate = refresh_rate or 5
+   w.wlan_iface = wlan_iface or "wlan0"
+
+   w:buttons(awful.util.table.join(
+                awful.button({}, 1,
+                   function ()
+                      w:show_connect_menu()
+   end)))
+   
+   vicious.register(w, net.wifi.worker, w.format, w.refresh_rate,
+                    w.wlan_iface)
+
+   return w
+end
+-- }}}
+
+-- }}}
+
+setmetatable(wifi, {__call = function(_,...) return wifi.new(...) end})
+
+return net

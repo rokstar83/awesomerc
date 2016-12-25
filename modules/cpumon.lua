@@ -47,8 +47,8 @@ function cpumon.new (args)
    vicious.register(temp, vicious.widgets.thermal, " $1 °С", 20,
                     "thermal_zone0")
 
-   --w.add(graph)
-   --w.add(temp)
+   w:add(graph)
+   w:add(temp)
 
    return w
 end
