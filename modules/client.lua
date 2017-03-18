@@ -4,6 +4,7 @@
 
 local awful = require('awful')
 local beautiful = require('beautiful')
+local wibox = require('wibox')
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
@@ -28,7 +29,7 @@ client.connect_signal("manage", function (c, startup)
         end
     end
 
-    local titlebars_enabled = false
+    local titlebars_enabled = beautiful.titlebar_enabled
     if titlebars_enabled and (c.type == "normal" or c.type == "dialog") then
         -- buttons for the titlebar
         local buttons = awful.util.table.join(
@@ -46,7 +47,6 @@ client.connect_signal("manage", function (c, startup)
 
         -- Widgets that are aligned to the left
         local left_layout = wibox.layout.fixed.horizontal()
-        left_layout:add(awful.titlebar.widget.iconwidget(c))
         left_layout:buttons(buttons)
 
         -- Widgets that are aligned to the right
@@ -60,7 +60,12 @@ client.connect_signal("manage", function (c, startup)
         -- The title goes in the middle
         local middle_layout = wibox.layout.flex.horizontal()
         local title = awful.titlebar.widget.titlewidget(c)
+--        local icon = awful.titlebar.widget.iconwidget(c)
+--        icon.resize = false
+        title.resize = false
+--        icon.set_align("center")
         title:set_align("center")
+--        middle_layout:add(icon)
         middle_layout:add(title)
         middle_layout:buttons(buttons)
 
