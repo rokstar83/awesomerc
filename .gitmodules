@@ -1,15 +1,1 @@
-[submodule "Orglendar"]
-  path = Orglendar
-  url = https://github.com/alexander-yakushev/Orglendar.git
-[submodule "circuit"]
-  path = circuit
-  url = git@github.com:thartman83/circuit
-[submodule "vicious"]
-  path = vicious
-  url = http://git.sysphere.org/vicious
-[submodule "awesome-pass"]
-  path = awesome-pass
-  url = http://github.com/thartman83/awesome-pass
-[submodule "radical"]
-  path = radical
-  url = https://github.com/Elv13/radical.git
+
