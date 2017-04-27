@@ -5,10 +5,14 @@
 local awful = require ("awful")
 local naughty = require ("naughty")
 local math = require ("math")
+local circuit = require('circuit')
 
 -- Default keys 
 
 conf.globalkeys = awful.util.table.join(
+   -- Testing
+   awful.key({ modkey,            }, "F10",    circuit.test             ),
+   
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
