@@ -1,16 +1,21 @@
---- My laptop awesome config
+-------------------------------------------------------------------------------
+-- rc.lua for Awesome Configuration                                          --
+-- Copyright (c) 2017 Tom Hartman (thomas.lees.hartman@gmail.com)            --
+--                                                                           --
+-- This program is free software; you can redistribute it and/or             --
+-- modify it under the terms of the GNU General Public License               --
+-- as published by the Free Software Foundation; either version 2            --
+-- of the License, or the License, or (at your option) any later             --
+-- version.                                                                  --
+--                                                                           --
+-- This program is distributed in the hope that it will be useful,           --
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of            --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             --
+-- GNU General Public License for more details.                              --
+-------------------------------------------------------------------------------
 
---- Required files
--- {{{
-local awful = require('awful')
-local pass = dofile ('/home/thartman/projects/awesome-pass/awesome-pass.lua')
-local beautiful = require('beautiful')
-local vicious = require('vicious')
-awful.client = require('awful.client')
-awful.screen = require('awful.screen')
-awful.rules = require ('awful.rules')
-awful.menu = require('awful.menu')
-wibox = require('wibox')
+--- Commentary -- {{{
+-- 
 -- }}}
 
 --- Initialize
@@ -18,21 +23,31 @@ wibox = require('wibox')
 -- The conf array contains and controls all elements for configuring
 -- awesome. The goal is to have the awesome configuration more data
 -- driven, hiding the actual implementation to modules and other libraries
-conf = {}
-conf.config_dir = '/home/' .. os.getenv('USER') .. '/.config/awesome/'
+conf             = {}
+conf.config_dir  = '/home/' .. os.getenv('USER') .. '/.config/awesome/'
 conf.modules_dir = conf.config_dir .. 'modules/'
-conf.icon_dir = conf.config_dir .. 'icons/'
+conf.icon_dir    = conf.config_dir .. 'icons/'
+
 -- The modkey is the primary means of interacting with awesome. By
 -- default this is set to mod4, sometimes called the 'super' key or
 -- 'windows' key depending on your specific keyboard layout
 modkey = 'Mod4'
 -- }}}
 
+--- Required files
+-- {{{
+local awful       = require('awful'    )
+local radical     = require('radical'  )
+local beautiful   = require('beautiful')
+local vicious     = require('vicious'  )
+local wibox       = require('wibox'    )
+local modules     = require('modules'  )
+-- }}}
+
 --- Theme
 -- {{{
- conf.theme = conf.modules_dir .. 'theme.lua'
- local beautiful = require('beautiful')
- beautiful.init(conf.theme)
+conf.theme = conf.modules_dir .. 'theme.lua'
+beautiful.init(conf.theme)
 -- }}}
 
 --- Default tools and programs
@@ -51,8 +66,7 @@ conf.tools.background_cmd = 'nitrogen'
 conf.tools.background_cmdopts = '--restore'
 -- }}}
 
---- Common Functions
--- {{{
+--- Common Functions -- {{{
 -- Defines common system functions for use in keybindings and menu
 -- commands. Currently the defined functions are:
 --    system_lock: Call the screen lock command as defined in the 'Tools
@@ -66,17 +80,18 @@ conf.tools.background_cmdopts = '--restore'
 conf.funcs = dofile (conf.modules_dir .. 'functions.lua')
 -- }}}
 
---- Widget definitions
--- {{{
+--- Widget definitions -- {{{
 -- Define the various widgets that will be
 -- displayed in awesome.  These will be placed in wiboxes and system
 -- trays in the 'Screen, Tags, and Layouts' section
 conf.widgets = {}
-conf.widgets.clock = awful.widget.textclock()
+conf.widgets.clock = wibox.widget.textclock()
+
+local m, m_vals = awesome_cal:month_menu()
+conf.widgets.clock:set_menu(m)
 conf.widgets.prompt = awful.widget.prompt()
 
---- pass widget
--- {{{
+--- pass widget -- {{{
 local base = wibox.widget.textbox()
 base:set_text('')
 local pass_args = {}
@@ -95,6 +110,9 @@ conf.widgets.batmon = dofile(conf.modules_dir .. 'batmon.lua')()
 --- cpu monitor -- {{{
 conf.widgets.cpu = dofile(conf.modules_dir .. "cpumon.lua")()
 -- }}}
+
+--- HDD monitor -- {{{
+conf.widgets.hdd = require("awesome-disk")()
 
 --- net widget testing -- {{{
 local net = dofile(conf.modules_dir .. 'net.lua')
@@ -177,6 +195,7 @@ conf.screens[1].tags =
      }
    }
 conf.screens[1].widgets = { conf.widgets.prompt,
+                            conf.widgets.hdd,
                             conf.widgets.batmon,
                             conf.widgets.cpu,
                             conf.widgets.wifi,
@@ -237,7 +256,7 @@ conf.rules = {
       properties = { floating = true } },
     { rule = { class = "emacs" },
       properties = { tag = conf.tags[1][2] } },
-    { rule = { class = "Firefox" },
+    { rule = { class = "firefox" },
       properties = { tag = conf.tags[1][4] } }
 }
 
@@ -247,4 +266,9 @@ dofile ('/home/thartman/projects/awesomerc/modules/rules.lua')
 -- Setup client rules
 dofile (conf.modules_dir .. 'client.lua')
 
+-- }}}
+
+
+--- Testing
+-- {{{
 -- }}}
