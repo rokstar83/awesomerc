@@ -1,9 +1,0 @@
-[submodule "modules/awesome-pass"]
-  path = modules/awesome-pass
-  url = https://github.com/thartman83/awesome-pass
-[submodule "modules/awesome-cal"]
-  path = modules/awesome-cal
-  url = https://github.com/thartman83/awesome-cal
-[submodule "modules/awesome-disk"]
-  path = modules/awesome-disk
-  url = https://github.com/thartman83/awesome-disk
