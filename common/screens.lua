@@ -1,6 +1,6 @@
 -- Generate the screen wibox and tag boxes
-local awful = require('awful')
-local wibox = require('wibox')
+local awful     = require('awful'    )
+local wibox     = require('wibox'    )
 local beautiful = require('beautiful')
 
 --- Screen Configuration

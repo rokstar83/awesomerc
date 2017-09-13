@@ -1,0 +1,9 @@
+[submodule "widgets/awesome-disk"]
+	path = widgets/awesome-disk
+	url = https://github.com/thartman83/awesome-disk.git
+[submodule "widgets/awesome-pass"]
+	path = widgets/awesome-pass
+	url = https://github.com/thartman83/awesome-pass.git
+[submodule "widgets/awesome-cal"]
+	path = widgets/awesome-cal
+	url = https://github.com/thartman83/awesome-cal.git

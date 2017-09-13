@@ -1,14 +1,41 @@
+-------------------------------------------------------------------------------
+-- functions.lua for Functions for Awesome Configuration                     --
+-- Copyright (c) 2017 Tom Hartman (thomas.lees.hartman@gmail.com)            --
+--                                                                           --
+-- This program is free software; you can redistribute it and/or             --
+-- modify it under the terms of the GNU General Public License               --
+-- as published by the Free Software Foundation; either version 2            --
+-- of the License, or the License, or (at your option) any later             --
+-- version.                                                                  --
+--                                                                           --
+-- This program is distributed in the hope that it will be useful,           --
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of            --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             --
+-- GNU General Public License for more details.                              --
+-------------------------------------------------------------------------------
+
+--- Commentary -- {{{
+-- Helper functions for Awesome Configuration
+-- }}}
+
+--- Functions -- {{{
 local awful = require('awful')
-local funcs  = {}
+local funcs = {}
 
--- Functions
--- {{{
-
+--- system_lock -- {{{
+----------------------------------------------------------------------
+-- lock the computer
+----------------------------------------------------------------------
 funcs.system_lock = function ()
    awful.util.spawn(conf.tools.screenlock_cmd .. ' ' ..
                        conf.tools.screenlock_cmdopts)
 end
+-- }}}
 
+--- reboot -- {{{
+----------------------------------------------------------------------
+-- Prompt the user to confirm reboot and then do so
+----------------------------------------------------------------------
 funcs.reboot = function ()
    local scr = mouse.screen
    awful.prompt.run({prompt = "Reboot (type 'yes' to confirm)? "},
@@ -23,10 +50,15 @@ funcs.reboot = function ()
          return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
       end)
 end
+-- }}}
 
-funcs.reboot = function ()
+--- shutdown -- {{{
+----------------------------------------------------------------------
+-- Prompt the user to confirm shutdown and then do so
+----------------------------------------------------------------------
+funcs.shutdown = function ()
    local scr = mouse.screen
-   awful.prompt.run({prompt = "Reboot (type 'yes' to confirm)? "},
+   awful.prompt.run({prompt = "Shutdown (type 'yes' to confirm)? "},
       conf.screens[src].promptbox,
       function (res)
          if string.lower(res) == 'yes' then
@@ -38,7 +70,12 @@ funcs.reboot = function ()
          return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
    end)
 end
+-- }}}
 
+--- cpu_temp -- {{{
+----------------------------------------------------------------------
+-- Return the CPU temperature
+----------------------------------------------------------------------
 funcs.cpu_temp = function (args)
    local thermal_path = args.thermal_path or "/sys/class/thermal/thermal_zone0/temp"
    local temp = 0
@@ -51,6 +88,7 @@ funcs.cpu_temp = function (args)
    return { temp / 1000 }
 end
 
-return funcs
+-- }}}
 
+return funcs
 -- }}}

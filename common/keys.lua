@@ -1,146 +1,157 @@
---- keys.lua
+-------------------------------------------------------------------------------
+-- keys.lua for Awesome keyboard bindings                                  --
+-- Copyright (c) 2017 Tom Hartman (thomas.lees.hartman@gmail.com)            --
+--                                                                           --
+-- This program is free software; you can redistribute it and/or             --
+-- modify it under the terms of the GNU General Public License               --
+-- as published by the Free Software Foundation; either version 2            --
+-- of the License, or the License, or (at your option) any later             --
+-- version.                                                                  --
+--                                                                           --
+-- This program is distributed in the hope that it will be useful,           --
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of            --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             --
+-- GNU General Public License for more details.                              --
+-------------------------------------------------------------------------------
 
--- Awesome key mappings
+--- Commentary -- {{{
+-- Keybindings for awesome
+-- }}}
 
-local awful = require ("awful")
-local naughty = require ("naughty")
-local math = require ("math")
-local circuit = require('circuit')
+--- keys -- {{{
+local awful   = require ("awful")
+local keys    = {}
 
--- Default keys 
+--- Global Keybindings -- {{{
+keys.global = awful.util.table.join(
 
-conf.globalkeys = awful.util.table.join(
-   -- Testing
-   awful.key({ modkey,            }, "F10",    circuit.test             ),
+   --- Tag Key Bindings -- {{{
+   awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
+   awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
+   awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
+
+   awful.key({ modkey,           }, "l",
+      function () awful.tag.incmwfact( 0.05)    end),
+   awful.key({ modkey,           }, "h",
+      function () awful.tag.incmwfact(-0.05)    end),
+   awful.key({ modkey, "Shift"   }, "h",
+      function () awful.tag.incnmaster( 1)      end),
+   awful.key({ modkey, "Shift"   }, "l",
+      function () awful.tag.incnmaster(-1)      end),
+   awful.key({ modkey, "Control" }, "h",
+      function () awful.tag.incncol( 1)         end),
+   awful.key({ modkey, "Control" }, "l",
+      function () awful.tag.incncol(-1)         end),
+   -- }}}
+
+   --- Client Window Key Bindings -- {{{
+   awful.key({ modkey,           }, "j",
+      function ()
+         awful.client.focus.byidx( 1)
+         if client.focus then client.focus:raise() end
+   end),
+   awful.key({ modkey,           }, "k",
+      function ()
+         awful.client.focus.byidx(-1)
+         if client.focus then client.focus:raise() end
+   end),
+   awful.key({ modkey,           }, "w",
+      function () mymainmenu:show() end),
+   -- }}}
    
-    awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
-    awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
-    awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
+   --- Layout Key Bindings -- {{{
+   awful.key({ modkey, "Shift"   }, "j",
+      function () awful.client.swap.byidx(  1)    end),
+   awful.key({ modkey, "Shift"   }, "k",
+      function () awful.client.swap.byidx( -1)    end),
+   awful.key({ modkey, "Control" }, "j",
+      function () awful.screen.focus_relative( 1) end),
+   awful.key({ modkey, "Control" }, "k",
+      function () awful.screen.focus_relative(-1) end),
+   awful.key({ modkey,           }, "u",
+      awful.client.urgent.jumpto),
+   awful.key({ modkey,           }, "Tab",
+      function ()
+         awful.client.focus.history.previous()
+         if client.focus then
+            client.focus:raise()
+         end
+   end),
+   awful.key({ modkey,           }, "space",
+      function () awful.layout.inc(layouts,  1) end),
+   awful.key({ modkey, "Shift"   }, "space",
+      function () awful.layout.inc(layouts, -1) end),
+   awful.key({ modkey, "Control" }, "n",
+      awful.client.restore),
+   -- }}}
+   
+   -- Program Key Bindings -- {{{
+   awful.key({ modkey,           }, "Return",
+      function ()
+         awful.util.spawn(conf.tools.terminal_cmd)
+   end),
+   -- }}}
 
-    awful.key({ modkey,           }, "j",
-        function ()
-            awful.client.focus.byidx( 1)
-            if client.focus then client.focus:raise() end
-        end),
-    awful.key({ modkey,           }, "k",
-        function ()
-            awful.client.focus.byidx(-1)
-            if client.focus then client.focus:raise() end
-        end),
-    awful.key({ modkey,           }, "w",
-       function () mymainmenu:show() end),
-
-    -- Layout manipulation
-    awful.key({ modkey, "Shift"   }, "j",
-       function () awful.client.swap.byidx(  1)    end),
-    awful.key({ modkey, "Shift"   }, "k",
-       function () awful.client.swap.byidx( -1)    end),
-    awful.key({ modkey, "Control" }, "j",
-       function () awful.screen.focus_relative( 1) end),
-    awful.key({ modkey, "Control" }, "k",
-       function () awful.screen.focus_relative(-1) end),
-    awful.key({ modkey,           }, "u",
-       awful.client.urgent.jumpto),
-    awful.key({ modkey,           }, "Tab",
-        function ()
-            awful.client.focus.history.previous()
-            if client.focus then
-                client.focus:raise()
-            end
-        end),
-
-    -- Standard program
-    awful.key({ modkey,           }, "Return",
-       function ()
-          awful.util.spawn(conf.tools.terminal_cmd)
-    end),
-    awful.key({ modkey, "Control" }, "r", awesome.restart),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit),
-    awful.key({ modkey,           }, "l",
-       function () awful.tag.incmwfact( 0.05)    end),
-    awful.key({ modkey,           }, "h",
-       function () awful.tag.incmwfact(-0.05)    end),
-    awful.key({ modkey, "Shift"   }, "h",
-       function () awful.tag.incnmaster( 1)      end),
-    awful.key({ modkey, "Shift"   }, "l",
-       function () awful.tag.incnmaster(-1)      end),
-    awful.key({ modkey, "Control" }, "h",
-       function () awful.tag.incncol( 1)         end),
-    awful.key({ modkey, "Control" }, "l",
-       function () awful.tag.incncol(-1)         end),
-    awful.key({ modkey,           }, "space",
-       function () awful.layout.inc(layouts,  1) end),
-    awful.key({ modkey, "Shift"   }, "space",
-       function () awful.layout.inc(layouts, -1) end),
-    awful.key({ modkey, "Control" }, "n",
-       awful.client.restore),
-
-    -- Prompt
-    awful.key({ modkey },            "r",
-       function ()
-          conf.widgets.prompt:run() end),
-
-    awful.key({ modkey }, "x",
-              function ()
-                  awful.prompt.run({ prompt = "Run Lua code: " },
-                  conf.widgets.prompt.widget,
-                  awful.util.eval, nil,
-                  awful.util.getdir("cache") .. "/history_eval")
-              end)
+   -- Awesome Key Bindings -- {{{
+   awful.key({ modkey, "Control" }, "r", awesome.restart),
+   awful.key({ modkey, "Shift"   }, "q", awesome.quit),
+   -- }}}      
+         
+   -- Prompt Key Bindings -- {{{
+   awful.key({ modkey },            "r",
+      function ()
+         conf.widgets.prompt:run() end),
+   
+   awful.key({ modkey }, "x",
+      function ()
+         awful.prompt.run({ prompt = "Run Lua code: " },
+            conf.widgets.prompt.widget,
+            awful.util.eval, nil,
+            awful.util.getdir("cache") .. "/history_eval")
+   end)
+   -- }}}
 )
 
--- Bind all key numbers to tags
 for i = 1, 9 do
-   conf.globalkeys = awful.util.table.join(conf.globalkeys,
-      -- View tag only.
-      awful.key({ modkey }, "#" .. i + 9,
+   keys.global = awful.util.table.join(
+      keys.global,
+      -- View Tag
+      awful.key({ conf.modkey }, "#" .. i + 9,
          function ()
             local screen = mouse.screen
-            local tag = awful.tag.gettags(screen)[i]
-            if tag then
-               awful.tag.viewonly(tag)
-            end
+            local tag    = awful.tag.gettags(screen)[i]
+            if tag then awful.tag.viewonly(tag) end
       end),
-      -- Toggle tag
-      awful.key({ modkey, "Control" }, "#" .. i + 9,
+      -- Toggle Tag
+      awful.key({ conf.modkey, "Control" }, "#" .. i + 9,
          function ()
             local screen = mouse.screen
-            local tag = awful.tag.gettags(screen)[i]
-            if tag then
-               awful.tag.viewtoggle(tag)
-            end
+            local tag    = awful.tag.gettags(screen)[i]
+            if tag then awful.tag.viewonly(tag) end
       end),
-      -- Move client to tag.
+      -- Move Client to Tag.
       awful.key({ modkey, "Shift" }, "#" .. i + 9,
          function ()
             if client.focus then
                local tag = awful.tag.gettags(client.focus.screen)[i]
-               if tag then
-                  awful.client.movetotag(tag)
-               end
+               if tag then awful.client.movetotag(tag) end
             end
       end),
-      -- Toggle tag.
+      -- Toggle Tag
       awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
          function ()
             if client.focus then
                local tag = awful.tag.gettags(client.focus.screen)[i]
-               if tag then
-                  awful.client.toggletag(tag)
-               end
+               if tag then awful.client.toggletag(tag) end
             end
-   end))
+      end)
+   )
 end
+         
+-- }}}
 
--- Bind custom global keys
-
-for _, key in ipairs(conf.keys.global) do
-   conf.globalkeys = awful.util.table.join(conf.globalkeys,
-                                           awful.key( key[1], key[2] , key[3]))
-end
-
--- Blind client keys
-conf.clientkeys = awful.util.table.join(
+--- Client Key Bindings -- {{{
+keys.clientkeys = awful.util.table.join(
    awful.key({ modkey,           }, "f",
       function (c) c.fullscreen = not c.fullscreen  end),
    awful.key({ modkey, "Shift"   }, "c",
@@ -165,7 +176,8 @@ conf.clientkeys = awful.util.table.join(
          c.maximized_vertical   = not c.maximized_vertical
    end)
     
-) 
+)
+-- }}}
 
--- Finally put it all together and assign the keybindings
-root.keys(conf.globalkeys)
+return keys
+-- }}}

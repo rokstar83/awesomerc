@@ -15,7 +15,7 @@
 -------------------------------------------------------------------------------
 
 --- Commentary -- {{{
--- 
+-- Awesome configuration for a laptop (single screen)
 -- }}}
 
 --- Initialize
@@ -25,8 +25,12 @@
 -- driven, hiding the actual implementation to modules and other libraries
 conf             = {}
 conf.config_dir  = '/home/' .. os.getenv('USER') .. '/.config/awesome/'
-conf.modules_dir = conf.config_dir .. 'modules/'
+conf.widget_dir  = conf.config_dir .. 'widgets/'
 conf.icon_dir    = conf.config_dir .. 'icons/'
+conf.common_dir  = conf.config_dir .. 'common/'
+
+package.path = conf.widget_dir .. '?.lua;' .. conf.widget_dir ..
+   '?/init.lua;' .. package.path
 
 -- The modkey is the primary means of interacting with awesome. By
 -- default this is set to mod4, sometimes called the 'super' key or
@@ -41,12 +45,12 @@ local radical     = require('radical'  )
 local beautiful   = require('beautiful')
 local vicious     = require('vicious'  )
 local wibox       = require('wibox'    )
-local modules     = require('modules'  )
+local widgets     = require('widgets'  )
 -- }}}
 
 --- Theme
 -- {{{
-conf.theme = conf.modules_dir .. 'theme.lua'
+conf.theme = conf.config_dir .. 'theme.lua'
 beautiful.init(conf.theme)
 -- }}}
 
@@ -77,7 +81,7 @@ conf.tools.background_cmdopts = '--restore'
 --              then calls the shutdown command as defined in the 'Tools and
 --              Programs' section
 --                  
-conf.funcs = dofile (conf.modules_dir .. 'functions.lua')
+conf.funcs = dofile (conf.common_dir .. 'functions.lua')
 -- }}}
 
 --- Widget definitions -- {{{
@@ -87,7 +91,7 @@ conf.funcs = dofile (conf.modules_dir .. 'functions.lua')
 conf.widgets = {}
 conf.widgets.clock = wibox.widget.textclock()
 
-local m, m_vals = awesome_cal:month_menu()
+local m, m_vals = widgets.awesome_cal:month_menu()
 conf.widgets.clock:set_menu(m)
 conf.widgets.prompt = awful.widget.prompt()
 
@@ -96,7 +100,7 @@ local base = wibox.widget.textbox()
 base:set_text('')
 local pass_args = {}
 pass_args.prompt = conf.widgets.prompt
-conf.widgets.pass = pass(base, pass_args )
+conf.widgets.pass = widgets.awesome_pass(base, pass_args)
 -- }}}
 
 -- temp widget
@@ -104,18 +108,18 @@ conf.widgets.pass = pass(base, pass_args )
 -- }}}
 
 --- battery -- {{{
-conf.widgets.batmon = dofile(conf.modules_dir .. 'batmon.lua')()
+conf.widgets.batmon = dofile(conf.common_dir .. 'batmon.lua')()
 -- }}}
 
 --- cpu monitor -- {{{
-conf.widgets.cpu = dofile(conf.modules_dir .. "cpumon.lua")()
+conf.widgets.cpu = dofile(conf.common_dir .. "cpumon.lua")()
 -- }}}
 
 --- HDD monitor -- {{{
 conf.widgets.hdd = require("awesome-disk")()
 
 --- net widget testing -- {{{
-local net = dofile(conf.modules_dir .. 'net.lua')
+local net = dofile(conf.common_dir .. 'net.lua')
 conf.widgets.wifi = net.wifi()
 
 --conf.widgets.wifi = wibox.widget.textbox()
@@ -135,7 +139,7 @@ conf.widgets.wifi = net.wifi()
 
 --- Mouse Buttons
 -- {{{
-dofile (conf.modules_dir .. 'mouse.lua')
+dofile (conf.common_dir .. 'mouse.lua')
 -- }}}
 
 --- Keybindings
@@ -153,7 +157,7 @@ conf.keys.client = {
 
 }
 
-dofile (conf.modules_dir .. 'keys.lua')
+dofile (conf.common_dir .. 'keys.lua')
 -- }}}
 
 --- Screen, Layouts, and Tags
@@ -199,41 +203,22 @@ conf.screens[1].widgets = { conf.widgets.prompt,
                             conf.widgets.batmon,
                             conf.widgets.cpu,
                             conf.widgets.wifi,
-                            conf.widgets.pass,                            
+                            conf.widgets.pass,
                             conf.widgets.clock }
 
-dofile (conf.modules_dir .. 'screens.lua')
+dofile (conf.common_dir .. 'screens.lua')
 -- }}}
 
 --- Menus-- tasklist widget
 -- {{{ 
-conf.menus = {}
-conf.menus.sys = {
-   { '&lock'     , conf.funcs.system_lock },
-   { '&reboot'   , conf.funcs.reboot      },
-   { '&shutdown' , conf.funcs.shutdown    },
-}
 
-conf.menus.awesome = {
-   { '&edit config'     ,                 },
-   { '&restart awesome' , awesome.restart },
-   { '&quit awesome'    , awesome.quit    },
-}
 
-conf.menus.apps = {
-}
-
-conf.menus.main = {
-   { '&system'  , conf.menus.sys     },
-   { '&apps'    , conf.menus.apps    },
-   { '&awesome' , conf.menus.awesome },
-}
-
-dofile (conf.modules_dir .. 'menu.lua')
+dofile (conf.common_dir .. 'menu.lua')
 -- }}}
 
 --- Rules
 -- {{{
+
 -- Global rules to define how certain programs are
 -- handled by awesome. Primarily this is used to let certain programs
 -- 'float' rather than become part of the tiled window set. This is
@@ -261,10 +246,10 @@ conf.rules = {
 }
 
 -- Setup the windowing rules
-dofile ('/home/thartman/projects/awesomerc/modules/rules.lua')
+dofile ('/home/thartman/projects/awesomerc/common/rules.lua')
 
 -- Setup client rules
-dofile (conf.modules_dir .. 'client.lua')
+dofile (conf.common_dir .. 'client.lua')
 
 -- }}}
 
