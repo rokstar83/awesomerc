@@ -47,29 +47,25 @@ beautiful.init(conf.theme)
 conf.tools = require('tools')
 -- }}}
 
---- Functions -- {{{
-conf.functions = require('functions')
--- }}}
-
---- Mouse -- {{{
-conf.mouse = require('mouse')
--- }}}
-
 --- Rules -- {{{
 conf.rules = require('rules')
 -- }}}
 
 --- Client -- {{{
-conf.client = require('client')
+
 -- }}}
 
+conf.keys   = require('keys'     )
+conf.mouse  = require('mouse'    )
 
-conf.keys = require('keys')
-conf.menu = require('menu')
-
+conf.client = require('client'   )
+conf.rules  = require('rules'    )
+conf.funcs  = require('functions')
+conf.menu   = require('menu'     )
 
 --- Finalize -- {{{
 root.keys(conf.global)
+root.buttons(conf.buttons.root)
 -- }}}
 
 -- }}}

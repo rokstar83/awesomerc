@@ -151,7 +151,7 @@ end
 -- }}}
 
 --- Client Key Bindings -- {{{
-keys.clientkeys = awful.util.table.join(
+keys.client = awful.util.table.join(
    awful.key({ modkey,           }, "f",
       function (c) c.fullscreen = not c.fullscreen  end),
    awful.key({ modkey, "Shift"   }, "c",

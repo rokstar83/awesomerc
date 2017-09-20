@@ -1,9 +1,46 @@
-local awful = require('awful')
+-------------------------------------------------------------------------------
+-- rules.lua for Awesome Configuration                                      --
+-- Copyright (c) 2017 Tom Hartman (thomas.lees.hartman@gmail.com)            --
+--                                                                           --
+-- This program is free software; you can redistribute it and/or             --
+-- modify it under the terms of the GNU General Public License               --
+-- as published by the Free Software Foundation; either version 2            --
+-- of the License, or the License, or (at your option) any later             --
+-- version.                                                                  --
+--                                                                           --
+-- This program is distributed in the hope that it will be useful,           --
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of            --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             --
+-- GNU General Public License for more details.                              --
+-------------------------------------------------------------------------------
+
+--- Commentary -- {{{
+-- Client window rules
+-- }}}
+
+--- rules -- {{{
+local awful     = require('awful')
 local beautiful = require('beautiful')
+
+local rules = {
+   -- The global rule, applies to all windows
+   { rule = {},
+     properties = { border_width = beautiful.border_width   ,
+                    border_color = beautiful.border_normal  ,
+                    focus        = awful.client.focus.filter,
+                    raise        = true                     ,
+                    keys         = conf.keys.client         ,
+                    buttons      = conf.mouse.client        ,
+     }
+   }
+}
+
+return rules
+-- }}}
 
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
-awful.rules.rules = conf.rules
+-- awful.rules.rules = conf.rules
 -- }}}
 
 -- {{{ Signals
