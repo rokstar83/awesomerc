@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- tools.lua for Tools for Awesome Configuration                             --
+-- widgets.lua for Awesome Configuration                                     --
 -- Copyright (c) 2017 Tom Hartman (thomas.lees.hartman@gmail.com)            --
 --                                                                           --
 -- This program is free software; you can redistribute it and/or             --
@@ -15,22 +15,17 @@
 -------------------------------------------------------------------------------
 
 --- Commentary -- {{{
--- 
+-- Widget Configuration
 -- }}}
 
---- tools -- {{{
-local tools = {}
+--- Widgets -- {{{
+local widgets = {}
 
-tools.terminal_cmd       = 'urxvt'
-tools.compmgr_cmd        = 'xcompmgr'
-tools.compmgr_cmdopts    = '-f -c -s'
-tools.filemanager_cmd    = 'mc'
-tools.browser_cmd        = os.getenv('BROWSER') or 'firefox'
-tools.editor_cmd         = os.getenv('EDITOR') or 'et'
-tools.screenlock_cmd     = 'xscreensaver-command'
-tools.screenlock_cmdopts = '-l'
-tools.background_cmd     = 'nitrogen'
-tools.background_cmdopts = '--restore'
+widgets.spacer = wibox.widget.textbox()
+widgets.spacer:set_text(" | ")
 
-return tools
+widgets.taglist = awful.widget.taglist(s,awful.widget.tagelist,filter.all,
+                                       conf.mouse.taglist)
+
+return widgets
 -- }}}

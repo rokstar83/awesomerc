@@ -1,16 +1,50 @@
+-------------------------------------------------------------------------------
+-- screens.lua for Awesome Configuration                                     --
+-- Copyright (c) 2017 Tom Hartman (thomas.lees.hartman@gmail.com)            --
+--                                                                           --
+-- This program is free software; you can redistribute it and/or             --
+-- modify it under the terms of the GNU General Public License               --
+-- as published by the Free Software Foundation; either version 2            --
+-- of the License, or the License, or (at your option) any later             --
+-- version.                                                                  --
+--                                                                           --
+-- This program is distributed in the hope that it will be useful,           --
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of            --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             --
+-- GNU General Public License for more details.                              --
+-------------------------------------------------------------------------------
+
+--- Commentary -- {{{
+-- Screen Configuration
+-- }}}
+
+-- Screen Config -- {{{
+
 -- Generate the screen wibox and tag boxes
 local awful     = require('awful'    )
 local wibox     = require('wibox'    )
 local beautiful = require('beautiful')
 
---- Screen Configuration
--- {{{ Screen config
-awful.util.spawn(conf.tools.background_cmd .. " " .. conf.tools.background_cmdopts)
+local screens   = {}
 
-local spacer = conf.widgets.spacer or wibox.widget.textbox()
-if conf.widgets.spacer == nil then
-   spacer:set_text(" | ")
-end
+--- Screens -- {{{
+screens.layouts = {
+   awful.layout.suit.floating,
+   awful.layout.suit.tile,
+   awful.layout.suit.tile.left,
+   awful.layout.suit.tile.bottom,
+   awful.layout.suit.tile.top,
+   awful.layout.suit.fair,
+   awful.layout.suit.fair.horizontal,
+   awful.layout.suit.spiral,
+   awful.layout.suit.spiral.dwindle,
+   awful.layout.suit.max,
+   awful.layout.suit.max.fullscreen,
+   awful.layout.suit.magnifier
+}
+-- }}}
+
+awful.util.spawn(conf.tools.background_cmd .. " " .. conf.tools.background_cmdopts)
 
 conf.tags = {}
 for s = 1, screen.count() do
@@ -19,8 +53,7 @@ for s = 1, screen.count() do
 end
 
 for s = 1, screen.count() do
-   --- Top Bar
-   -- {{{
+   --- Top Bar -- {{{
    -- layout icon and key commands for the layout icon
    conf.screens[s].layoutbox = awful.widget.layoutbox(s)
    conf.screens[s].layoutbox:buttons(awful.util.table.join(
@@ -64,9 +97,8 @@ for s = 1, screen.count() do
    -- and finally assign it to the top wibox
    conf.screens[s].top:set_widget(conf.screens[s].top_layout)
    -- }}}
-
-   --- Bottom Bar
-   -- {{{
+   
+   --- Bottom Bar -- {{{
    conf.screens[s].bottom = awful.wibox({ position = "bottom", screen = s})
    
    conf.screens[s].bottom_layout = wibox.layout.align.horizontal()
@@ -77,4 +109,6 @@ for s = 1, screen.count() do
    conf.screens[s].bottom:set_widget(conf.screens[s].bottom_layout)
    -- }}}
 end
+
+return screens
 -- }}}

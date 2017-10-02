@@ -23,16 +23,34 @@ local awful     = require('awful')
 local beautiful = require('beautiful')
 
 local rules = {
-   -- The global rule, applies to all windows
+   -- The global rule, applies to all client windows
    { rule = {},
      properties = { border_width = beautiful.border_width   ,
                     border_color = beautiful.border_normal  ,
                     focus        = awful.client.focus.filter,
                     raise        = true                     ,
                     keys         = conf.keys.client         ,
-                    buttons      = conf.mouse.client        ,
-     }
-   }
+                    buttons      = conf.mouse.client        } },
+   -- Floating clients
+   { rule_any = { },
+     class = {
+        "MPlayer",
+        "pinentry",
+        "gimp",
+     },
+     name = {
+        "Event Tester",
+     },
+     role = {
+        "AlarmWindow",
+        "pop-up",
+     }, properties = { floating = true }},
+
+
+   { rule = { class = "emacs" },
+     properties = { tag = conf.tags[1][2] } },
+   { rule = { class = "firefox" },
+     properties = { tag = conf.tags[1][4] } }
 }
 
 return rules
