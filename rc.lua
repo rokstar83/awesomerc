@@ -38,7 +38,10 @@ package.path = conf.config_dir .. "common/?.lua;" .. conf.config_dir ..
 conf.modkey = 'Mod4'
 -- }}}
 
--- {{{ Error handling
+-- Error Handling -- {{{
+
+local naughty = require('naughty')
+
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
@@ -70,7 +73,7 @@ beautiful.init(conf.theme)
 -- }}}
 
 conf.keys    = require('keys'      )
-conf.mouse   = require('mouse'     )
+conf.buttons = require('buttons'   )
 conf.widgets = require('widgets'   )
 conf.tools   = require('tools'     )
 conf.screens = require('screens'   )
@@ -80,8 +83,12 @@ conf.funcs   = require('functions' )
 conf.menu    = require('menu'      )
 
 --- Finalize -- {{{
-root.keys(conf.global)
-root.buttons(conf.buttons.root)
+root.keys(conf.keys.global)
+root.buttons(conf.buttons.global)
+
+local awful = require('awful'      )
+
+awful.screen.connect_for_each_screen(conf.screens.connect_screen)
 -- }}}
 
 -- }}}

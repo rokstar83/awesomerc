@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- mouse.lua for Awesome Configuration                                      --
+-- buttons.lua for Awesome Configuration                                     --
 -- Copyright (c) 2017 Tom Hartman (thomas.lees.hartman@gmail.com)            --
 --                                                                           --
 -- This program is free software; you can redistribute it and/or             --
@@ -15,21 +15,21 @@
 -------------------------------------------------------------------------------
 
 --- Commentary -- {{{
--- Mouse configuration options
+-- Mouse configuration options, called buttons because mouse is already a
+-- lua library in awesome
 -- }}}
 
 --- mouse -- {{{
-
-local awful = require('awful')
-local gears = require('gears')
-local mouse = {}
+local awful   = require('awful')
+local gears   = require('gears')
+local buttons = {}
 
 --- global mouse buttons -- {{{
 -- Mouse actions captured by awesome (uncaptured by client windows)
 --- Right Click: show awesome menu
 --- Scroll Up: Move to the previous tag
 --- Scroll Down: Move to the next tag
-mouse.global = awful.util.table.join(
+buttons.global = gears.table.join(
    awful.button({ }, 3, function () conf.menu.main:toggle() end),
    awful.button({ }, 4, awful.tag.viewnext),
    awful.button({ }, 5, awful.tag.viewprev))
@@ -40,7 +40,7 @@ mouse.global = awful.util.table.join(
 --- Left Click: Raise the client window
 --- Mod+Left Click: Move the client window
 --- Mod+Right Client: Resize client window
-mouse.client = gears.table.join(
+buttons.client = gears.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
     awful.button({ conf.modkey }, 1, awful.mouse.client.move),
     awful.button({ conf.modkey }, 3, awful.mouse.client.resize))
@@ -51,7 +51,7 @@ mouse.client = gears.table.join(
 -- Mouse actions captured by a titlebar
 --- Left Click:  Move client window associated with the titlebar
 --- Right Click: Resize client window associated with the titlebar
-mouse.titlebar = gears.table.join(
+buttons.titlebar = gears.table.join(
    awful.button({}, 1, function (c)
          client.focus = c
          c:raise()
@@ -75,7 +75,7 @@ mouse.titlebar = gears.table.join(
 --- Mod+Right Click:  Delete Tag
 --- Scroll Up:        Move to the previous tag
 --- Scroll Down:      Move to the next tag
-mouse.taglist = gears.table.join(
+buttons.taglist = gears.table.join(
    awful.button({ }, 1, awful.tag.viewonly),
    awful.button({ conf.modkey }, 1, awful.client.movetotag),
    awful.button({ }, 2, awful.tag.viewtoggle),
@@ -93,7 +93,7 @@ mouse.taglist = gears.table.join(
 --- Left Click:  Change focus to the selected client window
 --- Scroll Up:   Change focus to the previous client window
 --- Scroll Down: Change focus to the next client window
-mouse.tasklist =
+buttons.tasklist =
    awful.util.table.join(      
       awful.button({ }, 1, function (c)
             if c == client.focus then
@@ -127,11 +127,11 @@ mouse.tasklist =
 -- Right Click: Switch current tag to previous layout
 -- Scroll Up:   Switch current tag to next layout
 -- Scroll Down: Switch current tag to previous layout
-mouse.layoutbox = gears.table.join(awful.button({ }, 1, function () awful.layout.inc( 1) end),
+buttons.layoutbox = gears.table.join(awful.button({ }, 1, function () awful.layout.inc( 1) end),
                                    awful.button({ }, 3, function () awful.layout.inc(-1) end),
                                    awful.button({ }, 4, function () awful.layout.inc( 1) end),
                                    awful.button({ }, 5, function () awful.layout.inc(-1) end)) 
 -- }}}
 
-return mouse
+return buttons
 -- }}}

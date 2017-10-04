@@ -27,7 +27,7 @@ local beautiful = require('beautiful')
 
 local screens   = {}
 
---- Screens -- {{{
+--- Layouts -- {{{
 screens.layouts = {
    awful.layout.suit.floating,
    awful.layout.suit.tile,
@@ -44,71 +44,86 @@ screens.layouts = {
 }
 -- }}}
 
-awful.util.spawn(conf.tools.background_cmd .. " " .. conf.tools.background_cmdopts)
+--- tags -- {{{
+screens.tags = {
+   {'chat','code','read','surf','watch','create','system','monitor',}
+}
+-- }}}
 
-conf.tags = {}
-for s = 1, screen.count() do
-   conf.tags[s] = awful.tag(conf.screens[s].tags.names, s,
-                            conf.screens[s].tags.layout)
-end
-
-for s = 1, screen.count() do
-   --- Top Bar -- {{{
-   -- layout icon and key commands for the layout icon
-   conf.screens[s].layoutbox = awful.widget.layoutbox(s)
-   conf.screens[s].layoutbox:buttons(awful.util.table.join(
-              awful.button({ }, 1, function ()
-                    awful.layout.inc(conf.layouts,1) end),
-              awful.button({ }, 2, function ()
-                    awful.layout.inc(conf.layouts, -1) end),
-              awful.button({ }, 3, function ()
-                    awful.layout.inc(conf.layouts, -1) end),
-              awful.button({ }, 4, function ()
-                    awful.layout.inc(conf.layouts, 1) end),
-              nil))
-
-   -- taglist widget
-   conf.screens[s].taglist =
-      awful.widget.taglist(s, awful.widget.taglist.filter.all,
-                           conf.buttons.taglist)
-
-   -- Create the top wibox and put it all together
-   conf.screens[s].top = awful.wibox({ position = "top", screen = s })
-
-   -- Left top layout
-   conf.screens[s].top_left_layout = wibox.layout.fixed.horizontal()
-   conf.screens[s].top_left_layout:add(conf.screens[s].taglist)
-
-   -- Right top layout
-   conf.screens[s].top_right_layout = wibox.layout.fixed.horizontal()
-
-   for w = 1, table.getn(conf.screens[s].widgets) do
-      conf.screens[s].top_right_layout:add(conf.screens[s].widgets[w])
-      conf.screens[s].top_right_layout:add(spacer)
+--- set_wallpaper -- {{{
+----------------------------------------------------------------------
+-- Set the wallpaper for a specific screen based on the values in
+-- beautiful.
+--
+-- This function is almost a straight lift from the default awesome
+-- rc file
+-- @param s the screen to set the wallpaper on
+----------------------------------------------------------------------
+function set_wallpaper (s)
+   if beautiful.wallpaper then
+      local wallpaper = beautiful.wallpaper
+      if type(wallpaper) == "function" then
+         wallpaper = wallpaper(s)
+      end      
+      gears.wallpaper.maximized(wallpaper, s, true)
    end
-
-   conf.screens[s].top_right_layout:add(conf.screens[s].layoutbox)
-
-   -- Main layout
-   conf.screens[s].top_layout = wibox.layout.align.horizontal()
-   conf.screens[s].top_layout:set_left(conf.screens[s].top_left_layout)
-   conf.screens[s].top_layout:set_right(conf.screens[s].top_right_layout)
-
-   -- and finally assign it to the top wibox
-   conf.screens[s].top:set_widget(conf.screens[s].top_layout)
-   -- }}}
-   
-   --- Bottom Bar -- {{{
-   conf.screens[s].bottom = awful.wibox({ position = "bottom", screen = s})
-   
-   conf.screens[s].bottom_layout = wibox.layout.align.horizontal()
-   conf.screens[s].tasklist =
-      awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags,
-                            conf.buttons.tasklist)
-   conf.screens[s].bottom_layout:set_middle(conf.screens[s].tasklist)
-   conf.screens[s].bottom:set_widget(conf.screens[s].bottom_layout)
-   -- }}}
 end
+-- }}}
 
+--- connect_screen -- {{{
+----------------------------------------------------------------------
+-- Function to call when a screen is created or setup
+--
+-- @param s Screen to setup
+----------------------------------------------------------------------
+screens.connect_screen = function (s)
+   -- Wallpaper
+   set_wallpaper(s)
+
+   -- Tags
+   awful.tag(screens.tags[s.index], s, screens.layouts)
+
+   -- Prompt box
+   s.prompt = awful.widget.prompt()
+
+   -- Layout box
+   s.layoutbox = awful.widget.layoutbox(s)
+   s.layoutbox:buttons(conf.buttons.layoutbox)
+
+   -- Tag List
+   s.taglist = awful.widget.tasklist(s, awful.widget.tag, conf.buttons.taglist)
+
+   -- Tasklist
+   s.tasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags,
+                                      conf.buttons.tasklist)
+
+   -- Top Bar
+   s.top_layout = awful.wibar({position = "top", screen = s})
+   s.top_layout:setup {
+      layout = wibox.layout.align.horizontal,
+      -- left
+      {
+         layout = wibox.layout.fixed.horizontal,
+         s.taglist,
+         s.prompt
+      },
+      -- right
+      {
+         layout = wibox.layout.fixed.horizontal,
+         -- wibox.widget.systray(),
+         wibox.widget.textclock(),
+         s.layout,
+      },
+   }
+
+   -- Bottom Bar
+   s.bottom_layout = awful.wibar({position = "bottom", screen = s})
+   s.bottom_layout:setup {
+      layout = wibox.layout.align.horizontal,
+      s.tasklist,
+   }      
+end
+-- }}}
+   
 return screens
 -- }}}

@@ -19,11 +19,11 @@
 -- }}}
 
 --- Menu -- {{{
-
-local menu = {}
+local awful = require('awful')
+local menu  = {}
 
 --- System Menu -- {{{
-menus.sys = {
+menu.sys = {
    { '&lock'     , conf.funcs.system_lock },
    { '&reboot'   , conf.funcs.reboot      },
    { '&shutdown' , conf.funcs.shutdown    },
@@ -31,7 +31,7 @@ menus.sys = {
 -- }}}
 
 --- Awesome Function Menu -- {{{
-menus.awesome = {
+menu.awesome = {
    { '&edit config'     ,                 },
    { '&restart awesome' , awesome.restart },
    { '&quit awesome'    , awesome.quit    },
@@ -39,16 +39,17 @@ menus.awesome = {
 -- }}}
 
 --- Application Menu -- {{{
-menus.apps = {
+menu.apps = {
 }
 -- }}}
 
 --- Main Menu -- {{{
-menus.main = {
-   { '&system'  , conf.menus.sys     },
-   { '&apps'    , conf.menus.apps    },
-   { '&awesome' , conf.menus.awesome },
-}
+menu.main = awful.menu({ items =
+                            {
+                               { '&system'  , menu.sys     },
+                               { '&apps'    , menu.apps    },
+                               { '&awesome' , menu.awesome },
+}})
 
 -- }}}
 
@@ -61,7 +62,6 @@ awful.menu.menu_keys.enter = { "Right", "]", "}", "=", "+", }
 awful.menu.menu_keys.back  = { "Left", "[", "{", "-", "_",  }
 awful.menu.menu_keys.exec  = { "Return", "Space",           }
 awful.menu.menu_keys.close = { "Escape", "BackSpace",       }
-
 -- }}}
 
 return menu

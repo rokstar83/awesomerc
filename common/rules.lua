@@ -30,7 +30,7 @@ local rules = {
                     focus        = awful.client.focus.filter,
                     raise        = true                     ,
                     keys         = conf.keys.client         ,
-                    buttons      = conf.mouse.client        } },
+                    buttons      = conf.buttons.client       } },
    -- Floating clients
    { rule_any = { },
      class = {
@@ -47,10 +47,10 @@ local rules = {
      }, properties = { floating = true }},
 
 
-   { rule = { class = "emacs" },
-     properties = { tag = conf.tags[1][2] } },
-   { rule = { class = "firefox" },
-     properties = { tag = conf.tags[1][4] } }
+   -- { rule = { class = "emacs" },
+   --   properties = { tag = conf.tags[1][2] } },
+   -- { rule = { class = "firefox" },
+   --   properties = { tag = conf.tags[1][4] } }
 }
 
 return rules
