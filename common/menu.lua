@@ -40,6 +40,7 @@ menu.awesome = {
 
 --- Application Menu -- {{{
 menu.apps = {
+   {'&terminal', function () awful.spawn("xterm") end},
 }
 -- }}}
 

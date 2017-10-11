@@ -21,6 +21,7 @@
 --- keys -- {{{
 local awful   = require ("awful")
 local keys    = {}
+local modkey = conf.modkey
 
 --- Global Keybindings -- {{{
 keys.global = awful.util.table.join(
@@ -100,7 +101,7 @@ keys.global = awful.util.table.join(
    -- Prompt Key Bindings -- {{{
    awful.key({ modkey },            "r",
       function ()
-         conf.widgets.prompt:run() end),
+         awful.screen.focused().prompt:run() end),
    
    awful.key({ modkey }, "x",
       function ()
