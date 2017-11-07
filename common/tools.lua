@@ -32,5 +32,11 @@ tools.screenlock_cmdopts = '-l'
 tools.background_cmd     = 'nitrogen'
 tools.background_cmdopts = '--restore'
 
+--- DEBUG -- {{{
+if conf.debug then
+   print("Custom tools loaded")
+end
+-- }}}
+
 return tools
 -- }}}

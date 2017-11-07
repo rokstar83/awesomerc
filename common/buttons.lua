@@ -24,6 +24,21 @@ local awful   = require('awful')
 local gears   = require('gears')
 local buttons = {}
 
+-- {{{ Helper functions
+local function client_menu_toggle_fn()
+    local instance = nil
+
+    return function ()
+        if instance and instance.wibox.visible then
+            instance:hide()
+            instance = nil
+        else
+            instance = awful.menu.clients({ theme = { width = 250 } })
+        end
+    end
+end
+-- }}}
+
 --- global mouse buttons -- {{{
 -- Mouse actions captured by awesome (uncaptured by client windows)
 --- Right Click: show awesome menu
@@ -45,24 +60,6 @@ buttons.client = gears.table.join(
     awful.button({ conf.modkey }, 1, awful.mouse.client.move),
     awful.button({ conf.modkey }, 3, awful.mouse.client.resize))
 
--- }}}
-
---- titlebar mouse buttons -- {{{
--- Mouse actions captured by a titlebar
---- Left Click:  Move client window associated with the titlebar
---- Right Click: Resize client window associated with the titlebar
-buttons.titlebar = gears.table.join(
-   awful.button({}, 1, function (c)
-         client.focus = c
-         c:raise()
-         awful.mouse.client.move(c)
-   end),
-   awful.button({}, 3, function (c)
-         client.focus = c
-         c:raise()
-         awful.mouse.client.resize(c)
-   end)
-)
 -- }}}
 
 --- taglist mouse mouse -- {{{
@@ -131,6 +128,12 @@ buttons.layoutbox = gears.table.join(awful.button({ }, 1, function () awful.layo
                                    awful.button({ }, 3, function () awful.layout.inc(-1) end),
                                    awful.button({ }, 4, function () awful.layout.inc( 1) end),
                                    awful.button({ }, 5, function () awful.layout.inc(-1) end)) 
+-- }}}
+
+--- DEBUG -- {{{
+if conf.debug then
+   print("Custom mouse buttons loaded.")
+end
 -- }}}
 
 return buttons

@@ -91,7 +91,8 @@ screens.connect_screen = function (s)
    s.layoutbox:buttons(conf.buttons.layoutbox)
 
    -- Tag List
-   s.taglist = awful.widget.tasklist(s, awful.widget.tag, conf.buttons.taglist)
+   s.taglist = awful.widget.taglist(s, awful.widget.taglist.filter.all,
+                                    conf.buttons.taglist)
 
    -- Tasklist
    s.tasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags,
@@ -124,6 +125,13 @@ screens.connect_screen = function (s)
    }      
 end
 -- }}}
-   
+
+--- DEBUG -- {{{
+if conf.debug then
+   print("Custom screens loaded.")
+end
+
+-- }}}
+
 return screens
 -- }}}

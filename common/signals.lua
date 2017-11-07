@@ -21,9 +21,10 @@
 --- client -- {{{
 -- this is lifted straight from the default awesome rc.lua file
 
-local awful     = require('awful')
+local awful     = require('awful'    )
 local beautiful = require('beautiful')
-local wibox     = require('wibox')
+local wibox     = require('wibox'    )
+local gears     = require('gears'    )
 
 --- Signals -- {{{
 
@@ -52,24 +53,33 @@ client.connect_signal("manage", function (c, startup)
             awful.placement.no_offscreen(c)
         end
     end
-
-)
+end)
 -- }}}
 
 --- request::titlebars -- {{{
 client.connect_signal("request::titlebars", function(c)
    -- Buttons for the titlebar
-   local buttons = conf.mouse.titlebar
+   local buttons = gears.table.join(
+      awful.button({ }, 1, function()
+            client.focus = c
+            c:raise()
+            awful.mouse.client.move(c)
+      end),
+      awful.button({ }, 3, function()
+            client.focus = c
+            c:raise()
+            awful.mouse.client.resize(c)
+   end))
 
    awful.titlebar(c) : setup {
       { -- Left
-         awful.titlebar.widget.iconwidget(c)
+         awful.titlebar.widget.iconwidget(c),
          buttons = buttons,
          layout  = wibox.layout.fixed.horizontal
       },
       { -- Middle
          { -- Title
-            align  = "center"
+            align  = "center",
             widget = awful.titlebar.widget.titlewidget(c)
          },
          buttons = buttons,
@@ -96,6 +106,13 @@ client.connect_signal("focus",   function(c) c.border_color = beautiful.border_f
 --- unfocus -- {{{
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+-- }}}
+
+--- DEBUG -- {{{
+if conf.debug then
+   print("Custom signals loaded.")
+end
 
 -- }}}
 

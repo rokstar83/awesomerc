@@ -29,11 +29,11 @@
 conf            = {}
 conf.config_dir = '/home/' .. os.getenv('USER') .. '/.config/awesome/'
 conf.icon_dir   = conf.config_dir .. 'icons/'
+conf.debug = true
 
 -- Setup the package path so that all needed configuration libraries can be
 -- included
-package.path = conf.config_dir .. "common/?.lua;" .. conf.config_dir ..
-   "widgets/?.lua;" .. package.path
+package.path = package.path .. ";" .. conf.config_dir .. "common/?.lua;"
 
 conf.modkey = 'Mod4'
 -- }}}
@@ -72,13 +72,15 @@ conf.theme = conf.config_dir .. 'theme.lua'
 beautiful.init(conf.theme)
 -- }}}
 
+print(package.path)
+
 conf.keys    = require('keys'      )
 conf.buttons = require('buttons'   )
-conf.widgets = require('widgets'   )
+-- conf.widgets = require('widgets'   )
 conf.tools   = require('tools'     )
 conf.screens = require('screens'   )
-conf.client  = require('client'    )
 conf.rules   = require('rules'     )
+conf.signals = require('signals'   )
 conf.funcs   = require('functions' )
 conf.menu    = require('menu'      )
 

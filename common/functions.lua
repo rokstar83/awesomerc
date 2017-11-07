@@ -90,5 +90,12 @@ end
 
 -- }}}
 
+--- DEBUG -- {{{
+if conf.debug then
+   print("Custom functions loaded.")
+end
+
+-- }}}
+
 return funcs
 -- }}}

@@ -65,5 +65,12 @@ awful.menu.menu_keys.exec  = { "Return", "Space",           }
 awful.menu.menu_keys.close = { "Escape", "BackSpace",       }
 -- }}}
 
+--- DEBUG -- {{{
+if conf.debug then
+   print("Custom menu loaded.")
+end
+
+-- }}}
+
 return menu
 -- }}}

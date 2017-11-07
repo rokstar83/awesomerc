@@ -180,5 +180,11 @@ keys.client = awful.util.table.join(
 )
 -- }}}
 
+--- DEBUG -- {{{
+if conf.debug then
+   print("Custom keys loaded.")
+end 
+-- }}}
+
 return keys
 -- }}}
